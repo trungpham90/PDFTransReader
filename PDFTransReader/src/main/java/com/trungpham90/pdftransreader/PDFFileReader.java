@@ -1,23 +1,14 @@
 package com.trungpham90.pdftransreader;
 
-import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.InvalidParameterException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import org.apache.pdfbox.PDFReader;
-import org.apache.pdfbox.pdfviewer.PDFPagePanel;
-import org.apache.pdfbox.pdfviewer.PageWrapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.util.PDFTextStripperByArea;
 
 
 /**
@@ -51,7 +42,6 @@ public class PDFFileReader {
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         PDFTextStripper stripper = new PDFTextStripper();
-
         stripper.setStartPage(pageFrom);
         stripper.setEndPage(pageTo);
         stripper.writeText(pd, writer);

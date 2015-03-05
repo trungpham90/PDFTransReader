@@ -26,6 +26,8 @@ public class App {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+
+
                 JFileChooser chooser = new JFileChooser();
                 ExtensionFileFilter pdfFilter = new ExtensionFileFilter(new String[]{"PDF"}, "PDF Files");
                 chooser.setFileFilter(pdfFilter);
@@ -33,6 +35,8 @@ public class App {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
                         File file = chooser.getSelectedFile();
+
+
                         final PDFFileReader reader = new PDFFileReader(file);
                         final PDFViewerPanel panel = new PDFViewerPanel();
 
