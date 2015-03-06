@@ -5,16 +5,13 @@
 package com.trungpham90.pdftransreader;
 
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashSet;
 import javax.swing.JPanel;
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.util.PDFTextStripperByArea;
 
 /**
  * Display one PDF page
@@ -26,6 +23,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
     PDFPagePanel panel;
     PDPage page;
     private int x1, y1, x2, y2;
+    private HashSet<ViewerSelectionListener> listeners = new HashSet();
 
     public PDFViewerPanel() throws IOException {
         super();
@@ -44,19 +42,22 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
         repaint();
     }
 
-    public String getSelectedString(int x1, int y1, int x2, int y2) {
-        try {
-            PDFTextStripperByArea area = new PDFTextStripperByArea();
-            area.setSpacingTolerance(0.2f);
-            Rectangle rect = new Rectangle(x1, y1, x2 - x1, Math.max(10, y2 - y1));
-            area.addRegion("text", rect);
-            area.extractRegions(page);
+    public void addListener(ViewerSelectionListener lis) {
+        listeners.add(lis);
+    }
 
-            return area.getTextForRegion("text");
-        } catch (IOException ex) {
-            Logger.getLogger(PDFViewerPanel.class.getName()).log(Level.SEVERE, null, ex);
+    public void removeListener(ViewerSelectionListener lis) {
+        listeners.remove(lis);
+    }
+
+    public void notifyListeners() {
+        for (ViewerSelectionListener lis : listeners) {
+            int minX = Math.min(x1, x2);
+            int minY = Math.min(y1, y2);
+            int maxX = Math.max(x1, x2);
+            int maxY = Math.max(y1, y2);
+            lis.selectionTrigger(minX, minY, maxX, maxY);
         }
-        return null;
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -72,13 +73,20 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
         y2 = e.getY();
 
 
-        String v = getSelectedString(x1, y1, x2, y2);
-        System.out.println(v);
+        notifyListeners();
+
     }
 
     public void mouseEntered(MouseEvent e) {
     }
 
     public void mouseExited(MouseEvent e) {
+    }
+    /**
+     * Inteface, allow this panel to trigger action when some actions are triggered
+     */
+    static interface ViewerSelectionListener {
+
+        public void selectionTrigger(int x1, int y1, int x2, int y2);
     }
 }

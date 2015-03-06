@@ -39,6 +39,16 @@ public class App {
 
                         final PDFFileReader reader = new PDFFileReader(file);
                         final PDFViewerPanel panel = new PDFViewerPanel();
+                        panel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
+                            public void selectionTrigger(int x1, int y1, int x2, int y2) {
+                                try {
+                                    System.out.println(reader.getStringAt(page, x1, y1, x2, y2));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        });
+
 
                         final JPanel wrapper = new JPanel(new BorderLayout());
                         wrapper.add(panel, BorderLayout.CENTER);
@@ -50,8 +60,10 @@ public class App {
 
                         final JFrame frame = new JFrame();
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        frame.setLayout(new FlowLayout(FlowLayout.CENTER));
-                        frame.add(wrapper);
+                        frame.setLayout(new BorderLayout());
+
+
+                        frame.add(wrapper, BorderLayout.CENTER);
                         button.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
                                 panel.setPage(reader.getPage(page++));
