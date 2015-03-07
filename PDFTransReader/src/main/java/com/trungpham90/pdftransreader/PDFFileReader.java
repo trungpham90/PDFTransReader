@@ -93,19 +93,37 @@ public class PDFFileReader {
         return stripper.getProcessedString();
     }
 
-    private class PDFStripper extends PDFTextStripper {
+    public String getWordAt(int page, int x, int y) throws IOException {
+        PDFStripper stripper = new PDFStripper();
+        stripper.setDoubleClickPosition(x, y);
+        stripper.setStartPage(page);
+        stripper.setEndPage(page);
+        StringWriter stringWriter = new StringWriter();
+        BufferedWriter writer = new BufferedWriter(stringWriter);
+        stripper.writeText(doc, writer);
+        return stripper.getProcessedString();
+    }
 
+    private static class PDFStripper extends PDFTextStripper {
+
+        static enum Action {
+
+            Null,
+            Selection,
+            DoubleClick;
+        };
         private int x1, y1, x2, y2;
-        private boolean process = false;
+        private Action process = Action.Null;
         private boolean start = false;
         private float lastY = -1, lastX = -1;
-        private StringBuilder processedString;
+        private StringBuilder processedString = null;
+        private StringBuilder word = null;
 
         public PDFStripper() throws IOException {
         }
 
         public void setProcessPosition(int x1, int y1, int x2, int y2) {
-            process = true;
+            process = Action.Selection;
             processedString = new StringBuilder();
             this.x1 = x1;
             this.y1 = y1;
@@ -113,9 +131,20 @@ public class PDFFileReader {
             this.y2 = y2;
         }
 
+        public void setDoubleClickPosition(int x, int y) {
+            process = Action.DoubleClick;
+            word = new StringBuilder();
+            x1 = x;
+            y1 = y;
+        }
+
         public String getProcessedString() {
-            if (!process) {
+            if (process == Action.Null) {
                 return null;
+            }
+            //Special case, end of page!
+            if (processedString == null && start) {
+                processedString = word;
             }
             return processedString.toString();
         }
@@ -126,7 +155,7 @@ public class PDFFileReader {
             StringBuilder builder = new StringBuilder();
 
             for (TextPosition position : textPositions) {
-                if (process) {
+                if (process == Action.Selection) {
                     // System.out.println(position.getX() + " " + position.getY() + " " + position.getCharacter() + " " + position.getWidthOfSpace());
                     if (!start) {
                         if (x1 <= position.getX() + position.getWidth() && y1 <= position.getY() + position.getHeight() && x2 >= position.getX() && y2 >= position.getY()) {
@@ -144,7 +173,7 @@ public class PDFFileReader {
                             processedString.append("\n");
                         } else if (lastY == position.getY()) {
                             float g = position.getX() - lastX;
-                        }                        
+                        }
                         String str = position.getCharacter();
 
                         if (Character.isSpaceChar(str.charAt(0))) {
@@ -155,6 +184,34 @@ public class PDFFileReader {
                         lastY = position.getY();
                         lastX = position.getX();
                     }
+
+                } else if (process == Action.DoubleClick) {
+                    String str = position.getCharacter();
+                    if (x1 <= position.getX() + position.getWidth() && y1 <= position.getY() && processedString == null) {
+                        start = true;
+                    }
+                    if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
+                        if (start) {
+                            start = false;
+                            processedString = word;
+
+                        }                        
+                        word = new StringBuilder();
+                    } else if (lastY >= 0 && lastY != position.getY()) {
+                        if (start) {
+                            start = false;
+                            if (word.length() > 0) {
+                                processedString = word;
+                            }
+
+                        }                         
+                        word = new StringBuilder();
+                        word.append(str);
+
+                    } else {
+                        word.append(str);
+                    }
+                    lastY = position.getY();
 
                 }
                 String baseFont = position.getFont().getBaseFont();

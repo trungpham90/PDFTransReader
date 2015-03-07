@@ -50,7 +50,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
         listeners.remove(lis);
     }
 
-    public void notifyListeners() {
+    public void notifySelectionListeners() {
         for (ViewerSelectionListener lis : listeners) {
             int minX = Math.min(x1, x2);
             int minY = Math.min(y1, y2);
@@ -60,10 +60,21 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
         }
     }
 
+    public void notifyDoubleClickListeners(int x, int y) {
+        for (ViewerSelectionListener lis : listeners) {
+
+            lis.doubleClickTrigger(x, y);
+        }
+    }
+
     public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() > 1) {
+            notifyDoubleClickListeners(e.getX(), e.getY());
+        }
     }
 
     public void mousePressed(MouseEvent e) {
+
         x1 = e.getX();
         y1 = e.getY();
     }
@@ -72,8 +83,9 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
         x2 = e.getX();
         y2 = e.getY();
 
-
-        notifyListeners();
+        if (x1 != x2 || y1 != y2) {
+            notifySelectionListeners();
+        }
 
     }
 
@@ -82,11 +94,15 @@ public class PDFViewerPanel extends JPanel implements MouseListener {
 
     public void mouseExited(MouseEvent e) {
     }
+
     /**
-     * Inteface, allow this panel to trigger action when some actions are triggered
+     * Inteface, allow this panel to trigger action when some actions are done
+     * on the page.
      */
     static interface ViewerSelectionListener {
 
         public void selectionTrigger(int x1, int y1, int x2, int y2);
+
+        public void doubleClickTrigger(int x, int y);
     }
 }

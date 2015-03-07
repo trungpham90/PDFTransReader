@@ -42,7 +42,15 @@ public class App {
                         panel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
                             public void selectionTrigger(int x1, int y1, int x2, int y2) {
                                 try {
-                                    System.out.println(reader.getStringAt(page, x1, y1, x2, y2));
+                                    System.out.println("String: " + reader.getStringAt(page, x1, y1, x2, y2));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+
+                            public void doubleClickTrigger(int x, int y) {
+                                try {
+                                    System.out.println("WORD: " + reader.getWordAt(page, x, y));
                                 } catch (IOException ex) {
                                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                                 }
