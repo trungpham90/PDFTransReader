@@ -1,5 +1,7 @@
-package com.trungpham90.pdftransreader;
+package com.pdfreader;
 
+import com.pdfreader.viewer.PDFViewerPanel;
+import com.pdfreader.reader.PDFFileReader;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -51,6 +53,7 @@ public class App {
                             public void doubleClickTrigger(int x, int y) {
                                 try {
                                     System.out.println("WORD: " + reader.getWordAt(page, x, y));
+                                    panel.setHighLight((int)reader.getStartX(), (int)reader.getStartY(), (int)reader.getEndX(), (int)reader.getEndY());
                                 } catch (IOException ex) {
                                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                                 }

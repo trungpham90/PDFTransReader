@@ -1,5 +1,6 @@
-package com.trungpham90.pdftransreader;
+package com.pdfreader.reader;
 
+import com.pdfreader.util.MatchedCharacterUtil;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class PDFFileReader {
 
     private File file;
     private PDDocument doc;
+    private float startX, startY, endX, endY;
 
     public PDFFileReader(String location) throws IOException {
 
@@ -62,6 +64,22 @@ public class PDFFileReader {
         return result;
     }
 
+    public float getStartX() {
+        return startX;
+    }
+
+    public float getStartY() {
+        return startY;
+    }
+
+    public float getEndX() {
+        return endX;
+    }
+
+    public float getEndY() {
+        return endY;
+    }
+
     public int getNumPages() {
         return doc.getNumberOfPages();
     }
@@ -90,6 +108,7 @@ public class PDFFileReader {
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         stripper.writeText(doc, writer);
+
         return stripper.getProcessedString();
     }
 
@@ -101,9 +120,16 @@ public class PDFFileReader {
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         stripper.writeText(doc, writer);
+        startX = stripper.resultStartX;
+        startY = stripper.resultStartY;
+        endX = stripper.resultEndX;
+        endY = stripper.resultEndY;
         return stripper.getProcessedString();
     }
 
+    /**
+     *
+     */
     private static class PDFStripper extends PDFTextStripper {
 
         static enum Action {
@@ -115,7 +141,7 @@ public class PDFFileReader {
         private int x1, y1, x2, y2;
         private Action process = Action.Null;
         private boolean start = false;
-        private float lastY = -1, lastX = -1;
+        private float lastY = -1, lastX = -1, startX = -1, startY = -1, resultStartX = -1, resultStartY = -1, resultEndX = -1, resultEndY = -1, lastSize = -1;
         private StringBuilder processedString = null;
         private StringBuilder word = null;
 
@@ -136,6 +162,13 @@ public class PDFFileReader {
             word = new StringBuilder();
             x1 = x;
             y1 = y;
+            startX = -1;
+            startY = -1;
+            resultStartX = -1;
+            resultEndX = -1;
+            resultStartY = -1;
+            resultEndY = -1;
+            lastSize = -1;
         }
 
         public String getProcessedString() {
@@ -154,76 +187,92 @@ public class PDFFileReader {
             String prevBaseFont = "";
             StringBuilder builder = new StringBuilder();
 
-            for (TextPosition position : textPositions) {
+            for (TextPosition pos : textPositions) {
                 if (process == Action.Selection) {
                     // System.out.println(position.getX() + " " + position.getY() + " " + position.getCharacter() + " " + position.getWidthOfSpace());
+                    boolean matched = MatchedCharacterUtil.isCharacterMatched(x1, y1, x2, y2, pos);
                     if (!start) {
-                        if (x1 <= position.getX() + position.getWidth() && y1 <= position.getY() + position.getHeight() && x2 >= position.getX() && y2 >= position.getY()) {
+                        if (matched) {
                             start = true;
-                            lastY = position.getY();
-                            lastX = position.getX();
+                            lastY = pos.getY();
+                            lastX = pos.getX();
                         }
                     } else {
-                        if (x2 < position.getX() && y2 < position.getY()) {
+                        if (!matched) {
                             start = false;
                         }
                     }
                     if (start) {
-                        if (lastY < position.getY()) {
+                        if (lastY < pos.getY()) {
                             processedString.append("\n");
-                        } else if (lastY == position.getY()) {
-                            float g = position.getX() - lastX;
+                        } else if (lastY == pos.getY()) {
+                            float g = pos.getX() - lastX;
                         }
-                        String str = position.getCharacter();
+                        String str = pos.getCharacter();
 
                         if (Character.isSpaceChar(str.charAt(0))) {
                             processedString.append(" ");
                         } else {
                             processedString.append(str);
                         }
-                        lastY = position.getY();
-                        lastX = position.getX();
+                        lastY = pos.getY();
+                        lastX = pos.getX();
                     }
 
                 } else if (process == Action.DoubleClick) {
-                    String str = position.getCharacter();
-                    if (x1 <= position.getX() + position.getWidth() && y1 <= position.getY() && processedString == null) {
+                    String str = pos.getCharacter();
+                    if (x1 <= pos.getX() && y1 <= pos.getY() && processedString == null) {
                         start = true;
                     }
                     if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
                         if (start) {
                             start = false;
                             processedString = word;
-
-                        }                        
+                            resultStartX = startX;
+                            resultStartY = startY;
+                            resultEndX = lastX;
+                            resultEndY = lastY;
+                        }
+                        startX = -1;
                         word = new StringBuilder();
-                    } else if (lastY >= 0 && lastY != position.getY()) {
+                    } else if (lastY >= 0 && lastY != pos.getY()) {
                         if (start) {
                             start = false;
                             if (word.length() > 0) {
                                 processedString = word;
+                                resultStartX = startX;
+                                resultStartY = startY;
+                                resultEndX = lastX ;
+                                resultEndY = lastY;
                             }
 
-                        }                         
+                        }
+                        startX = pos.getX();
+                        startY = pos.getY();
                         word = new StringBuilder();
                         word.append(str);
 
                     } else {
+                        if (startX == -1) {
+                            startX = pos.getX();
+                            startY = pos.getY();
+                        }
                         word.append(str);
                     }
-                    lastY = position.getY();
-
+                    lastX = pos.getX();
+                    lastY = pos.getY();
+                    lastSize = MatchedCharacterUtil.getWidth(pos);
                 }
-                String baseFont = position.getFont().getBaseFont();
-                if (baseFont != null && !baseFont.equals(prevBaseFont)) {
-                    builder.append('[').append(baseFont).append(']');
-                    prevBaseFont = baseFont;
-                }
-
-                builder.append(position.getCharacter());
+//                String baseFont = pos.getFont().getBaseFont();
+//                if (baseFont != null && !baseFont.equals(prevBaseFont)) {
+//                    builder.append('[').append(baseFont).append(']');
+//                    prevBaseFont = baseFont;
+//                }
+//
+//                builder.append(pos.getCharacter());
             }
 
-            writeString(builder.toString());
+            //   writeString(builder.toString());
         }
     }
 }
