@@ -83,15 +83,14 @@ public class PDFPageDrawer extends PageDrawer {
         if (text.getX() == firstX && text.getY() == firstY) {
             process = false;
         }
-
+        //TO DO: create a list of word with coordinate to improve matching
         if (process) {
             try {
                 if (firstX == -1) {
                     firstX = text.getX();
                     firstY = text.getY();
                 }
-                boolean matched = MatchedCharacterUtil.isCharacterMatched(x1, y1, x2, y2, text);
-                //TO DO: create a covenient class for matching text -> should be a strategy pattern
+                boolean matched = MatchedCharacterUtil.isCharacterMatched(x1, y1, x2, y2, text);                
                 if (!start) {
 
                     if (matched) {

@@ -77,7 +77,11 @@ public class App {
                         frame.add(wrapper, BorderLayout.CENTER);
                         button.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                panel.setPage(reader.getPage(page++));
+                                try {
+                                    panel.setPage(reader.getPage(page++));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                                 wrapper.validate();
                                 wrapper.repaint();
                                 frame.revalidate();

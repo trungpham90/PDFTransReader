@@ -22,6 +22,7 @@ public class PDFFileReader {
     private File file;
     private PDDocument doc;
     private float startX, startY, endX, endY;
+    private PDFPageProcessor processor = null;
 
     public PDFFileReader(String location) throws IOException {
 
@@ -84,9 +85,13 @@ public class PDFFileReader {
         return doc.getNumberOfPages();
     }
 
-    public PDPage getPage(int num) {
+    public PDPage getPage(int num) throws IOException {
+        processor = new PDFPageProcessor(num, doc);
+
         return (PDPage) doc.getDocumentCatalog().getAllPages().get(num);
     }
+    
+    
 
     /**
      * Get String at specified position
@@ -99,6 +104,8 @@ public class PDFFileReader {
      * @throws IOException
      */
     public String getStringAt(int page, int x1, int y1, int x2, int y2) throws IOException {
+
+
         PDFStripper stripper = new PDFStripper();
         stripper.setProcessPosition(x1, y1, x2, y2);
         System.out.println(x1 + " " + y1 + " " + x2 + " " + y2);
@@ -242,7 +249,7 @@ public class PDFFileReader {
                                 processedString = word;
                                 resultStartX = startX;
                                 resultStartY = startY;
-                                resultEndX = lastX ;
+                                resultEndX = lastX;
                                 resultEndY = lastY;
                             }
 
