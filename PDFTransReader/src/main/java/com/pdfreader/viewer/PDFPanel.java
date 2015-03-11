@@ -4,11 +4,13 @@
  */
 package com.pdfreader.viewer;
 
+import com.pdfreader.reader.PDFWord;
 import com.pdfreader.viewer.PDFPageDrawer;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.JPanel;
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdfviewer.PageDrawer;
@@ -36,8 +38,8 @@ public class PDFPanel extends JPanel {
     public PDFPanel() throws IOException {
         drawer = new PDFPageDrawer();
     }
-    public void setHightlightArea(int x1, int y1, int x2, int y2){
-        drawer.setHighlight(x1, y1, x2, y2);
+    public void setHightlightArea(List<PDFWord> list){
+        drawer.setHighlight(list);
     }
     
     public void setHighLight(boolean on){

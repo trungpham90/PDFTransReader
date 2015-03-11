@@ -4,12 +4,14 @@
  */
 package com.pdfreader.viewer;
 
+import com.pdfreader.reader.PDFWord;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.JPanel;
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -53,8 +55,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     }
 
     public void notifySelectionListeners() {
-        panel.setHightlightArea(x1, y1, x2, y2);
-        panel.repaint();
+
         for (ViewerSelectionListener lis : listeners) {
             int minX = Math.min(x1, x2);
             int minY = Math.min(y1, y2);
@@ -81,9 +82,9 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
         }
     }
 
-    public void setHighLight(int x1, int y1, int x2, int y2) {
+    public void setHighLight(List<PDFWord> list) {
         System.out.println("Set " + x1 + " " + y1 + " " + x2 + " " + y2);
-        panel.setHightlightArea(x1,y1,x2,y2);
+        panel.setHightlightArea(list);
         panel.repaint();
     }
 
@@ -96,14 +97,8 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     public void mouseReleased(MouseEvent e) {
         x2 = e.getX();
         y2 = e.getY();
-
         if (x1 != x2 || y1 != y2) {
-            int minX = Math.min(x1, x2);
-            int minY = Math.min(y1, y2);
-            int maxX = Math.max(x1, x2);
-            int maxY = Math.max(y1, y2);
-            panel.setHightlightArea(minX, minY, maxX, maxY);
-            panel.repaint();
+            notifySelectionListeners();
         }
 
     }
