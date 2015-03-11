@@ -4,6 +4,7 @@
  */
 package com.pdfreader.util;
 
+import com.pdfreader.reader.PDFWord;
 import java.io.IOException;
 import org.apache.pdfbox.util.TextPosition;
 
@@ -13,30 +14,49 @@ import org.apache.pdfbox.util.TextPosition;
  */
 public class MatchedCharacterUtil {
 
-    public static boolean isCharacterMatched(int x1, int y1, int x2, int y2, TextPosition pos) throws IOException {
-
-        float height = getHeight(pos);
-        float width = getWidth(pos);
-
-        if (x1 <= pos.getX() && y1 <= pos.getY() && x2 >= pos.getX() && y2 >= pos.getY() - height / 3) {
-            // System.out.println(pos.getX() + " " + pos.getY() + " " + pos.getCharacter() + " " + height);
-            return true;
-        } else if (y1 < pos.getY() && y2 > pos.getY()) {
-            // System.out.println(pos.getX() + " " + pos.getY() + " " + pos.getCharacter() + " " + height + " " + width);
-            return true;
-        }
-        return false;
-    }
-
     public static float getWidth(TextPosition pos) throws IOException {
 
-        float width = pos.getXScale();
+        float width = Math.min(pos.getXScale(), pos.getWidth());
         return width;
     }
 
     public static float getHeight(TextPosition pos) throws IOException {
 
-        float height = pos.getYScale();
+        float height = Math.min(pos.getYScale(), pos.getHeight());
         return height;
+    }
+
+    public static boolean isContains(PDFWord word, float x1, float y1, float x2, float y2) {
+        boolean first = word.getY() <= y1 && y1 <= word.getY() + word.getHeight();
+        boolean second = word.getY() <= y2 && y2 <= word.getY() + word.getHeight();
+        if (first && second) {
+            if (word.getX() <= x1 && word.getX() + word.getWidth() >= x1) {
+                return true;
+            } else if (word.getX() <= x2 && word.getX() + word.getWidth() >= x2) {
+                return true;
+            } else if (x1 <= word.getX() && word.getX() + word.getWidth() <= x2) {
+                return true;
+            }
+        } else if (first) {
+            if (word.getX() + word.getWidth() >= x1) {
+                return true;
+            }
+        } else if (second) {
+            if (word.getX() <= x2) {
+                return true;
+            }
+        } else if (y1 < word.getY() && word.getY() < y2) {
+            return true;
+        }
+
+
+        return false;
+    }
+
+    public static boolean isCorrectWord(PDFWord word, float x, float y) {
+        if (word.getX() <= x && word.getX() + word.getWidth() >= x) {
+            return word.getY() <= y && word.getY() + word.getHeight() >= y;
+        }
+        return false;
     }
 }

@@ -11,7 +11,7 @@ package com.pdfreader.reader;
 public class PDFWord {
 
     private float x, y, width, height;
-    String word;
+    private String word;
 
     public PDFWord(float x, float y, float width, float height, String word) {
         this.x = x;

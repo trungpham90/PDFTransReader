@@ -2,12 +2,15 @@ package com.pdfreader;
 
 import com.pdfreader.viewer.PDFViewerPanel;
 import com.pdfreader.reader.PDFFileReader;
+import com.pdfreader.reader.PDFWord;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -44,7 +47,9 @@ public class App {
                         panel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
                             public void selectionTrigger(int x1, int y1, int x2, int y2) {
                                 try {
-                                    System.out.println("String: " + reader.getStringAt(page, x1, y1, x2, y2));
+                                    List<PDFWord> list = reader.getStringAt(page, x1, y1, x2, y2);
+                                    panel.setHighLight(list);
+                                    panel.repaint();
                                 } catch (IOException ex) {
                                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                                 }
@@ -52,8 +57,11 @@ public class App {
 
                             public void doubleClickTrigger(int x, int y) {
                                 try {
-                                    System.out.println("WORD: " + reader.getWordAt(page, x, y));
-                                    panel.setHighLight((int)reader.getStartX(), (int)reader.getStartY(), (int)reader.getEndX(), (int)reader.getEndY());
+                                    PDFWord word = reader.getWordAt(page, x, y);
+                                    List<PDFWord> list = new ArrayList();
+                                    list.add(word);
+                                    panel.setHighLight(list);
+                                    panel.repaint();
                                 } catch (IOException ex) {
                                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                                 }

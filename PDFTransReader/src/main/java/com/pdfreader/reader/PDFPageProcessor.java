@@ -8,6 +8,7 @@ import com.pdfreader.util.MatchedCharacterUtil;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -24,26 +25,55 @@ class PDFPageProcessor {
     public PDFPageProcessor(int page, PDDocument doc) throws IOException {
         processPage(page, doc);
     }
-    TreeMap<Float, TreeMap<Float, PDFWord>> map = new TreeMap();//Sorted word based on position
+    TreeMap<Float, ArrayList<PDFWord>> map = new TreeMap();//Sorted word based on position
 
     private void processPage(int page, PDDocument doc) throws IOException {
+        System.out.println("Process Page " + page);
         PDFStripper stripper = new PDFStripper();
 
-        stripper.setStartPage(page);
-        stripper.setEndPage(page);
+        stripper.setStartPage(page + 1);
+        stripper.setEndPage(page + 1);
 
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         stripper.writeText(doc, writer);
         stripper.finish();
+        System.out.println(map);
     }
 
     public List<PDFWord> getStringAt(float x1, float y1, float x2, float y2) {
         List<PDFWord> list = new ArrayList();
-        float a = map.floorKey(x1);
+        Float start = map.floorKey(y1);
+        if (start == null) {
+            return list;
+        }
+        for (Float a : map.tailMap(start, true).keySet()) {
+            if (a > y2) {
+                break;
+            }
+            for (PDFWord word : map.get(a)) {
+                if (MatchedCharacterUtil.isContains(word, x1, y1, x2, y2)) {
+                    list.add(word);
+                }
+            }
+        }
 
         return list;
 
+    }
+
+    public PDFWord getWordAt(float x, float y) {
+        Float start = map.floorKey(y);
+        if (start != null) {
+            for (Float a : map.tailMap(start, true).keySet()) {
+                for (PDFWord word : map.get(a)) {
+                    if (MatchedCharacterUtil.isCorrectWord(word, x, y)) {
+                        return word;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private class PDFStripper extends PDFTextStripper {
@@ -55,6 +85,7 @@ class PDFPageProcessor {
         private StringBuilder word = new StringBuilder();
 
         public PDFStripper() throws IOException {
+            super();
         }
 
         /**
@@ -63,9 +94,9 @@ class PDFPageProcessor {
         public void finish() {
             if (word.length() > 0) {
                 if (!map.containsKey(startY)) {
-                    map.put(startY, new TreeMap());
+                    map.put(startY, new ArrayList());
                 }
-                map.get(startY).put(startX, new PDFWord(startX, startY, width, height, word.toString()));
+                map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
             }
         }
 
@@ -76,21 +107,21 @@ class PDFPageProcessor {
                 if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
                     if (word.length() > 0) {
                         if (!map.containsKey(startY)) {
-                            map.put(startY, new TreeMap());
+                            map.put(startY, new ArrayList());
                         }
-                        map.get(startY).put(startX, new PDFWord(startX, startY, width, height, word.toString()));
+                        map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
                     startX = -1;
                     word = new StringBuilder();
                 } else if (lastY >= 0 && lastY != pos.getY()) {
                     if (word.length() > 0) {
                         if (!map.containsKey(startY)) {
-                            map.put(startY, new TreeMap());
+                            map.put(startY, new ArrayList());
                         }
-                        map.get(startY).put(startX, new PDFWord(startX, startY, width, height, word.toString()));
+                        map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
-                    startX = pos.getX();
-                    startY = pos.getY();
+                    startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);
+                    startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
                     width = MatchedCharacterUtil.getWidth(pos);
                     height = MatchedCharacterUtil.getHeight(pos);
 
@@ -99,8 +130,8 @@ class PDFPageProcessor {
 
                 } else {
                     if (startX == -1) {
-                        startX = pos.getX();
-                        startY = pos.getY();
+                        startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);
+                        startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
                         width = MatchedCharacterUtil.getWidth(pos);
                         height = MatchedCharacterUtil.getHeight(pos);
                     } else {
