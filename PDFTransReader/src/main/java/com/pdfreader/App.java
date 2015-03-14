@@ -1,5 +1,6 @@
 package com.pdfreader;
 
+import com.pdfreader.dic.DicParser;
 import com.pdfreader.viewer.PDFViewerPanel;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
@@ -58,6 +59,7 @@ public class App {
                             public void doubleClickTrigger(int x, int y) {
                                 try {
                                     PDFWord word = reader.getWordAt(page, x, y);
+                                    System.out.println(DicParser.getWordDefinition(word.getWord()));
                                     List<PDFWord> list = new ArrayList();
                                     list.add(word);
                                     panel.setHighLight(list);

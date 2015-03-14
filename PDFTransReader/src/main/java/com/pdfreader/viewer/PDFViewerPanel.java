@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.JPanel;
-import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 /**
@@ -26,6 +25,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     PDFPanel panel;
     PDPage page;
     private int x1, y1, x2, y2;
+    private int count = 0;
     private HashSet<ViewerSelectionListener> listeners = new HashSet();
 
     public PDFViewerPanel() throws IOException {
@@ -89,7 +89,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     }
 
     public void mousePressed(MouseEvent e) {
-
+        count = 0;
         x1 = e.getX();
         y1 = e.getY();
     }
@@ -112,7 +112,8 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     public void mouseDragged(MouseEvent e) {
         x2 = e.getX();
         y2 = e.getY();
-        if (x1 != x2 || y1 != y2) {
+        count = (count + 1) % 5;
+        if ((x1 != x2 || y1 != y2) && count == 0) {
             notifySelectionListeners();
         }
     }

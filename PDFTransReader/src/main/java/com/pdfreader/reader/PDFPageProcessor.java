@@ -37,8 +37,7 @@ class PDFPageProcessor {
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         stripper.writeText(doc, writer);
-        stripper.finish();
-        System.out.println(map);
+        stripper.finish();       
     }
 
     public List<PDFWord> getStringAt(float x1, float y1, float x2, float y2) {
