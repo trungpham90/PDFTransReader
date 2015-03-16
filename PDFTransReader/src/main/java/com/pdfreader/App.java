@@ -4,8 +4,11 @@ import com.pdfreader.dic.DicParser;
 import com.pdfreader.viewer.PDFViewerPanel;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
+import com.pdfreader.viewer.PDFDicDialog;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,6 +31,8 @@ import org.apache.pdfbox.util.ExtensionFileFilter;
 public class App {
 
     static int page = 0;
+    private static final int OFFSET_X = 5;
+    private static final int OFFSET_Y = 5;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -39,10 +44,11 @@ public class App {
                 chooser.setFileFilter(pdfFilter);
                 int result = chooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
+                    DicParser.init();
                     try {
                         File file = chooser.getSelectedFile();
-
-
+                        final JFrame frame = new JFrame();
+                        final PDFDicDialog dialog = new PDFDicDialog(frame, false);
                         final PDFFileReader reader = new PDFFileReader(file);
                         final PDFViewerPanel panel = new PDFViewerPanel();
                         panel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
@@ -59,11 +65,19 @@ public class App {
                             public void doubleClickTrigger(int x, int y) {
                                 try {
                                     PDFWord word = reader.getWordAt(page, x, y);
-                                    System.out.println(DicParser.getWordDefinition(word.getWord()));
-                                    List<PDFWord> list = new ArrayList();
-                                    list.add(word);
-                                    panel.setHighLight(list);
-                                    panel.repaint();
+                                    if (word != null) {
+                                        String content = DicParser.getWordDefinition(word.getWord());
+                                        if (content != null) {
+                                            dialog.setContent(content);
+                                            dialog.setLocationRelativeTo(frame);
+                                            dialog.setVisible(true);
+                                        }
+                                        List<PDFWord> list = new ArrayList();
+                                        list.add(word);
+                                        panel.setHighLight(list);
+                                        panel.repaint();
+                                    }
+
                                 } catch (IOException ex) {
                                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                                 }
@@ -79,7 +93,7 @@ public class App {
                         wrapper.add(tmp, BorderLayout.SOUTH);
                         panel.setPage(reader.getPage(page++));
 
-                        final JFrame frame = new JFrame();
+
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         frame.setLayout(new BorderLayout());
 

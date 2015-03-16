@@ -22,13 +22,17 @@ public class DicParser {
 
     private static HashMap<String, StringBuilder> map = new HashMap();
     private static Node root;
-    static {
-        try {
-            process();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(DicParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static boolean initCall = false;
 
+    public static void init() {
+        if (!initCall) {
+            try {
+                process();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(DicParser.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            initCall = true;
+        }
     }
 
     private static void process() throws FileNotFoundException {
@@ -47,24 +51,23 @@ public class DicParser {
             map.get(cur).append(line).append("\n");
             line = scanner.nextLine();
         }
-        root = new Node((char)0);
-        for(String word : map.keySet()){
+        root = new Node((char) 0);
+        for (String word : map.keySet()) {
             char c = word.charAt(0);
-            if(!root.nxt.containsKey(c)){
+            if (!root.nxt.containsKey(c)) {
                 root.nxt.put(c, new Node(c));
             }
             buildTree(word, 0, root.nxt.get(c));
         }
 
     }
-    
-    
-    private static void buildTree(String word, int index, Node node){
-        if(index + 1 == word.length()){           
+
+    private static void buildTree(String word, int index, Node node) {
+        if (index + 1 == word.length()) {
             node.definition = map.get(word).toString();
-        }else{
+        } else {
             char c = word.charAt(index + 1);
-            if(!node.nxt.containsKey(c)){
+            if (!node.nxt.containsKey(c)) {
                 node.nxt.put(c, new Node(c));
             }
             buildTree(word, index + 1, node.nxt.get(c));
@@ -72,35 +75,42 @@ public class DicParser {
     }
 
     public static String getWordDefinition(String word) {
-       if(word == null || word.isEmpty()){
-           return null;
-       }
-       word = word.toUpperCase();
-       char c = word.charAt(0);
-       if(root.nxt.containsKey(c)){
-           return getDefinition(word, 0, root.nxt.get(c));
-       }
-       return null;
+        if (word == null || word.isEmpty()) {
+            return null;
+        }
+        word = word.toUpperCase();
+        char c = word.charAt(0);
+        if (root.nxt.containsKey(c)) {
+            return getDefinition(word, 0, root.nxt.get(c));
+        }
+        return null;
     }
-    
-    private static String getDefinition(String word, int index, Node node){
-        
+
+    private static String getDefinition(String word, int index, Node node) {
+
         String result = null;
-        if(node.definition != null){
+        if (node.definition != null) {
             result = node.definition;
         }
-        if(index + 1 == word.length()){
+        if (index + 1 == word.length()) {
             return result;
         }
         char c = word.charAt(index + 1);
-        if(node.nxt.containsKey(c)){
+        if (node.nxt.containsKey(c)) {
             String tmp = getDefinition(word, index + 1, node.nxt.get(c));
-            if(tmp != null){
+            if (tmp != null) {
                 return tmp;
+            }
+        }else{//Look ahead one character, may not be correct!
+            for(char nxt : node.nxt.keySet()){
+                if(node.nxt.get(nxt).definition != null){
+                    result = node.nxt.get(nxt).definition;
+                    break;
+                }
             }
         }
         return result;
-        
+
     }
 
     private static boolean isAllCap(String word) {
