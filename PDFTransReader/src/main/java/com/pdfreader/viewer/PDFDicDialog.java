@@ -4,6 +4,7 @@
  */
 package com.pdfreader.viewer;
 
+import com.pdfreader.dic.DicVO;
 import java.awt.Point;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -40,18 +41,14 @@ public class PDFDicDialog extends javax.swing.JDialog {
         });
     }
 
-    public void setContent(String content) {
+    public void setContent(DicVO content) {
         StringBuilder builder = new StringBuilder();
-        Scanner scanner = new Scanner(content);
-        boolean first = true;
+        Scanner scanner = new Scanner(content.getContent());
+        wordLabel.setText(content.getWord());
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            if (first) {
-                builder.append("<b>").append(line).append("</b>").append("<br>");
-                first = false;
-            } else {
-                builder.append(line).append("<br>");
-            }
+            builder.append(line).append("<br>");
+
         }
         dicPane.setText(builder.toString());
         dicPane.validate();
@@ -80,11 +77,15 @@ public class PDFDicDialog extends javax.swing.JDialog {
 
         scrollPane = new javax.swing.JScrollPane();
         dicPane = new javax.swing.JTextPane();
+        wordLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         dicPane.setBackground(new java.awt.Color(204, 204, 255));
         scrollPane.setViewportView(dicPane);
+
+        wordLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        wordLabel.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,15 +93,21 @@ public class PDFDicDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(wordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(wordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -150,5 +157,6 @@ public class PDFDicDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane dicPane;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JLabel wordLabel;
     // End of variables declaration//GEN-END:variables
 }

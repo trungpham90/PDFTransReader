@@ -20,7 +20,6 @@ import java.util.logging.Logger;
  */
 public class DicParser {
 
-    private static HashMap<String, StringBuilder> map = new HashMap();
     private static Node root;
     private static boolean initCall = false;
 
@@ -39,42 +38,41 @@ public class DicParser {
         Scanner scanner = new Scanner();
         String line = scanner.nextLine();
         String cur = null;
+        root = new Node((char) 0);
+        Node node = null;
         while (line != null) {
 
             String word = line.split(" ")[0];
             if (isAllCap(word)) {
                 cur = word;
-                if (!map.containsKey(word)) {
-                    map.put(word, new StringBuilder());
+                char c = cur.charAt(0);
+                if (!root.nxt.containsKey(c)) {
+                    root.nxt.put(c, new Node(c));
                 }
+                node = buildTree(cur, 0, root.nxt.get(c));
             }
-            map.get(cur).append(line).append("\n");
+            if (node != null) {
+                node.definition.append(line).append("\n");
+            }
             line = scanner.nextLine();
         }
-        root = new Node((char) 0);
-        for (String word : map.keySet()) {
-            char c = word.charAt(0);
-            if (!root.nxt.containsKey(c)) {
-                root.nxt.put(c, new Node(c));
-            }
-            buildTree(word, 0, root.nxt.get(c));
-        }
-
     }
 
-    private static void buildTree(String word, int index, Node node) {
+    private static Node buildTree(String word, int index, Node node) {
         if (index + 1 == word.length()) {
-            node.definition = map.get(word).toString();
+            node.word = word;
+
+            return node;
         } else {
             char c = word.charAt(index + 1);
             if (!node.nxt.containsKey(c)) {
                 node.nxt.put(c, new Node(c));
             }
-            buildTree(word, index + 1, node.nxt.get(c));
+            return buildTree(word, index + 1, node.nxt.get(c));
         }
     }
 
-    public static String getWordDefinition(String word) {
+    public static DicVO getWordDefinition(String word) {
         if (word == null || word.isEmpty()) {
             return null;
         }
@@ -86,25 +84,25 @@ public class DicParser {
         return null;
     }
 
-    private static String getDefinition(String word, int index, Node node) {
+    private static DicVO getDefinition(String word, int index, Node node) {
 
-        String result = null;
-        if (node.definition != null) {
-            result = node.definition;
+        DicVO result = null;
+        if (node.word != null) {
+            result = new DicVO(node.word, node.definition.toString());
         }
         if (index + 1 == word.length()) {
             return result;
         }
         char c = word.charAt(index + 1);
         if (node.nxt.containsKey(c)) {
-            String tmp = getDefinition(word, index + 1, node.nxt.get(c));
+            DicVO tmp = getDefinition(word, index + 1, node.nxt.get(c));
             if (tmp != null) {
                 return tmp;
             }
-        }else{//Look ahead one character, may not be correct!
-            for(char nxt : node.nxt.keySet()){
-                if(node.nxt.get(nxt).definition != null){
-                    result = node.nxt.get(nxt).definition;
+        } else {//Look ahead one character, may not be correct!
+            for (char nxt : node.nxt.keySet()) {
+                if (node.nxt.get(nxt).word != null) {
+                    result = new DicVO(node.nxt.get(nxt).word, node.nxt.get(nxt).definition.toString());
                     break;
                 }
             }
@@ -134,16 +132,12 @@ public class DicParser {
     static class Node {
 
         char cur;
-        String definition = null;
+        String word = null;
+        StringBuilder definition = new StringBuilder();
         HashMap<Character, Node> nxt = new HashMap();
 
         Node(char cur) {
             this.cur = cur;
-        }
-
-        Node(char cur, String definition) {
-            this(cur);
-            this.definition = definition;
         }
     }
 

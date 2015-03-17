@@ -1,6 +1,7 @@
 package com.pdfreader;
 
 import com.pdfreader.dic.DicParser;
+import com.pdfreader.dic.DicVO;
 import com.pdfreader.viewer.PDFViewerPanel;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
@@ -66,7 +67,7 @@ public class App {
                                 try {
                                     PDFWord word = reader.getWordAt(page, x, y);
                                     if (word != null) {
-                                        String content = DicParser.getWordDefinition(word.getWord());
+                                        DicVO content = DicParser.getWordDefinition(word.getWord());
                                         if (content != null) {
                                             dialog.setContent(content);
                                             dialog.setLocationRelativeTo(frame);
