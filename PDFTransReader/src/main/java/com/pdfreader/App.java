@@ -1,15 +1,14 @@
 package com.pdfreader;
 
-import com.pdfreader.dic.DicParser;
+import com.pdfreader.dic.DicManager;
 import com.pdfreader.dic.DicVO;
-import com.pdfreader.viewer.PDFViewerPanel;
+import com.pdfreader.dic.IDic;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
 import com.pdfreader.viewer.PDFDicDialog;
+import com.pdfreader.viewer.PDFViewerPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -45,7 +44,7 @@ public class App {
                 chooser.setFileFilter(pdfFilter);
                 int result = chooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    DicParser.init();
+                    final IDic dic = DicManager.getDictionary(DicManager.Language.Vietnamese);
                     try {
                         File file = chooser.getSelectedFile();
                         final JFrame frame = new JFrame();
@@ -67,7 +66,7 @@ public class App {
                                 try {
                                     PDFWord word = reader.getWordAt(page, x, y);
                                     if (word != null) {
-                                        DicVO content = DicParser.getWordDefinition(word.getWord());
+                                        DicVO content = dic.getWordDefinition(word.getWord());
                                         if (content != null) {
                                             dialog.setContent(content);
                                             dialog.setLocationRelativeTo(frame);
