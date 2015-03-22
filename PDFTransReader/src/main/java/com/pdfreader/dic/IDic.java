@@ -9,5 +9,6 @@ package com.pdfreader.dic;
  * @author Trung Pham
  */
 public interface IDic {
-    public DicVO getWord(String word);
+    public DicVO getWordDefinition(String word);
+    
 }
