@@ -63,11 +63,16 @@ public class ViDicParser implements IDic {
             node = buildTree(cur, 0, root.nxt.get(c));
             String[]tmp = line.split(" ");
             for(String word : tmp){
+                boolean twoLine = word.endsWith("-");
+                boolean nxtLine = word.endsWith("+");
+                if(twoLine){
+                    word = word.substring(0, word.length() - 1);
+                }
                 node.definition.append(word).append(" ");
-                if(word.endsWith("-")){
+                if(twoLine){
+                    node.definition.append("\n").append("\n");
+                }else if(nxtLine){
                     node.definition.append("\n");
-                }else if(word.endsWith("+")){
-                    node.definition.append("\n").append("   ");
                 }
                 
             }
