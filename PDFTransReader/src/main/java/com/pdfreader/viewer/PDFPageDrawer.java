@@ -21,8 +21,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 public class PDFPageDrawer extends PageDrawer {
 
     private int x1, y1, x2, y2;
-    private float firstX = -1, firstY = -1;
-    private Graphics graphics;
+    private float firstX = -1, firstY = -1;   
     private Color highlightColor = Color.YELLOW;
     private boolean start = false, process = false;
     private List<PDFWord> list = new ArrayList();
@@ -34,10 +33,7 @@ public class PDFPageDrawer extends PageDrawer {
     public void setHighlight(List<PDFWord> list) {
         process = true;
         this.list = new ArrayList(list);
-
-        System.out.println("Set Hight light");
-
-    }
+   }
 
     public void isHighLight(boolean on) {
         list.clear();
@@ -45,18 +41,14 @@ public class PDFPageDrawer extends PageDrawer {
     }
 
     @Override
-    public void drawPage(Graphics g, PDPage p, Dimension pageDimension) throws IOException {
-
-        graphics = g;
-        //System.out.println(process + " " + list.size());
+    public void drawPage(Graphics g, PDPage p, Dimension pageDimension) throws IOException {        
         if (!list.isEmpty()) {
-            Color origin = graphics.getColor();
-            graphics.setColor(highlightColor);
-            for (PDFWord rect : list) {
-                //System.out.println("Rect " + rect);
-                graphics.fillRect((int) rect.getX(), (int) rect.getY(), (int) Math.ceil(rect.getWidth()), (int) Math.ceil(rect.getHeight()));
+            Color origin = g.getColor();
+            g.setColor(highlightColor);
+            for (PDFWord rect : list) {                
+                g.fillRect((int) rect.getX(), (int) rect.getY(), (int) Math.ceil(rect.getWidth()), (int) Math.ceil(rect.getHeight()));
             }
-            graphics.setColor(origin);
+            g.setColor(origin);
         }
         super.drawPage(g, p, pageDimension);
     }
