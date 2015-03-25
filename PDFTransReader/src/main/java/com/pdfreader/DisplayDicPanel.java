@@ -55,6 +55,16 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         dic = DicManager.getDictionary(DicManager.Language.English);
     }
 
+    private void setPage(int num) {
+        try {
+            page = num;
+            panel.setPage(reader.getPage(page));
+            pageTextField.setText("" + (page + 1));
+        } catch (IOException ex) {
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -182,7 +192,9 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void languageComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageComboBoxActionPerformed
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         dic = DicManager.getDictionary(DicManager.Language.valueOf(languageComboBox.getSelectedItem().toString()));
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_languageComboBoxActionPerformed
 
     private void showToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showToggleButtonActionPerformed
@@ -200,7 +212,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = chooser.getSelectedFile();
-                this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
                 reader = new PDFFileReader(file);
                 panel = new PDFViewerPanel();
@@ -242,7 +254,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                         }
                     }
                 });
-                panel.setPage(reader.getPage(page++));
+                setPage(0);
                 leftPanel.removeAll();
                 JScrollPane scroll = new JScrollPane(panel);
                 scroll.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);//Improve the performance significantly!
@@ -250,7 +262,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 leftPanel.add(scroll, BorderLayout.CENTER);
                 leftPanel.revalidate();
                 leftPanel.repaint();
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             } catch (IOException ex) {
             }
 
@@ -258,16 +270,23 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_openButtonActionPerformed
 
     private void pageTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageTextFieldActionPerformed
+        String text = pageTextField.getText();
+        try {
+            int tmp = Integer.parseInt(text);
+            if (tmp <= totalPage && tmp > 0) {
+                setPage(tmp - 1);
+            } else {
+                pageTextField.setText("" + (page + 1));
+            }
+        } catch (NumberFormatException ex) {
+            pageTextField.setText("" + (page + 1));
+        }
+
     }//GEN-LAST:event_pageTextFieldActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (page > 0) {
-            try {
-                panel.setPage(reader.getPage(--page));
-                pageTextField.setText("" + (page + 1));
-            } catch (IOException ex) {
-                Logger.getLogger(DisplayDicPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            setPage(page - 1);
         }
 
 
@@ -276,12 +295,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
         if (page + 1 < totalPage) {
-            try {
-                panel.setPage(reader.getPage(++page));
-                pageTextField.setText("" + (page + 1));
-            } catch (IOException ex) {
-                Logger.getLogger(DisplayDicPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            setPage(page + 1);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

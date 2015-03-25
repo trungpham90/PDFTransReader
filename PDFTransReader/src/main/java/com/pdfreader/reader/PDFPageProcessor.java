@@ -8,7 +8,6 @@ import com.pdfreader.util.MatchedCharacterUtil;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -28,7 +27,6 @@ class PDFPageProcessor {
     TreeMap<Float, ArrayList<PDFWord>> map = new TreeMap();//Sorted word based on position
 
     private void processPage(int page, PDDocument doc) throws IOException {
-        System.out.println("Process Page " + page);
         PDFStripper stripper = new PDFStripper();
 
         stripper.setStartPage(page + 1);
@@ -37,7 +35,7 @@ class PDFPageProcessor {
         StringWriter stringWriter = new StringWriter();
         BufferedWriter writer = new BufferedWriter(stringWriter);
         stripper.writeText(doc, writer);
-        stripper.finish();       
+        stripper.finish();
     }
 
     public List<PDFWord> getStringAt(float x1, float y1, float x2, float y2) {
@@ -103,6 +101,11 @@ class PDFPageProcessor {
         protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
             for (TextPosition pos : textPositions) {
                 String str = pos.getCharacter();
+                boolean space = false;
+                if (lastY == pos.getY()) {
+                    space = (pos.getX() - lastX - lastSize) >= getAverageCharTolerance();
+                }
+                //System.out.println(str + " " + pos.getWidthOfSpace() + " " + getSpacingTolerance());
                 if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
                     if (word.length() > 0) {
                         if (!map.containsKey(startY)) {
@@ -112,7 +115,7 @@ class PDFPageProcessor {
                     }
                     startX = -1;
                     word = new StringBuilder();
-                } else if (lastY >= 0 && lastY != pos.getY()) {
+                } else if (space || (lastY >= 0 && lastY != pos.getY())) {
                     if (word.length() > 0) {
                         if (!map.containsKey(startY)) {
                             map.put(startY, new ArrayList());
@@ -137,10 +140,12 @@ class PDFPageProcessor {
                         width += MatchedCharacterUtil.getWidth(pos);
                         height = Math.max(height, MatchedCharacterUtil.getHeight(pos));
                     }
+
                     word.append(str);
                 }
                 lastX = pos.getX();
                 lastY = pos.getY();
+                lastSize = MatchedCharacterUtil.getWidth(pos);
 
             }
 

@@ -1,6 +1,5 @@
 package com.pdfreader.reader;
 
-import com.pdfreader.util.MatchedCharacterUtil;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.util.PDFTextStripper;
-import org.apache.pdfbox.util.TextPosition;
 
 /**
  * Process a PDF file
