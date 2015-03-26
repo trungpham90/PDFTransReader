@@ -53,7 +53,7 @@ public class MatchedCharacterUtil {
         return false;
     }
 
-    public static boolean isCorrectWord(PDFWord word, float x, float y) {
+    public static boolean isCorrectWord(PDFWord word, float x, float y) {      
         if (word.getX() <= x && word.getX() + word.getWidth() >= x) {
             return word.getY() <= y && word.getY() + word.getHeight() >= y;
         }

@@ -40,7 +40,10 @@ class PDFPageProcessor {
 
     public List<PDFWord> getStringAt(float x1, float y1, float x2, float y2) {
         List<PDFWord> list = new ArrayList();
-        Float start = map.floorKey(y1);
+        Float start = null;
+        for (int i = 10; i >= -10 && start == null; i--) {
+            start = map.ceilingKey(y1 - i);
+        }
         if (start == null) {
             return list;
         }
@@ -60,10 +63,13 @@ class PDFPageProcessor {
     }
 
     public PDFWord getWordAt(float x, float y) {
-        Float start = map.floorKey(y);
+        Float start = null;
+        for (int i = 10; i >= -10 && start == null; i--) {
+            start = map.ceilingKey(y - i);
+        }
         if (start != null) {
             for (Float a : map.tailMap(start, true).keySet()) {
-                for (PDFWord word : map.get(a)) {
+                for (PDFWord word : map.get(a)) {                 
                     if (MatchedCharacterUtil.isCorrectWord(word, x, y)) {
                         return word;
                     }
@@ -93,6 +99,7 @@ class PDFPageProcessor {
                 if (!map.containsKey(startY)) {
                     map.put(startY, new ArrayList());
                 }
+                //System.out.println(startY + " " + word.toString());
                 map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
             }
         }
@@ -111,6 +118,7 @@ class PDFPageProcessor {
                         if (!map.containsKey(startY)) {
                             map.put(startY, new ArrayList());
                         }
+                        //System.out.println(startY + " " + word.toString());
                         map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
                     startX = -1;
@@ -120,6 +128,7 @@ class PDFPageProcessor {
                         if (!map.containsKey(startY)) {
                             map.put(startY, new ArrayList());
                         }
+                        //System.out.println(startY + " " + word.toString() );
                         map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
                     startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);

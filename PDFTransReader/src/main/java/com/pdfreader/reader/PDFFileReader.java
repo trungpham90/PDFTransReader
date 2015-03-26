@@ -102,9 +102,7 @@ public class PDFFileReader {
 
     public PDFWord getWordAt(int page, int x, int y) throws IOException {
         PDFWord word = processor.getWordAt(x, y);
-        if (word != null) {
-            System.out.println("WORD " + word);
-        }
+        System.out.println("Word " + word);
         return word;
     }
 }

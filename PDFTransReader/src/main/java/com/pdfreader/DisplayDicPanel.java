@@ -18,8 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
@@ -37,7 +37,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private PDFViewerPanel panel;
     private int page = 0;
     private int totalPage = 0;
-    private IDic dic;
+    private IDic  dic;
 
     /**
      * Creates new form DisplayDicPanel
@@ -74,7 +74,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
+        splitPane = new javax.swing.JSplitPane();
         leftPanel = new javax.swing.JPanel();
         rightPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
@@ -86,10 +86,10 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
-        jSplitPane1.setDividerLocation(800);
+        splitPane.setDividerLocation(800);
 
         leftPanel.setLayout(new java.awt.BorderLayout());
-        jSplitPane1.setLeftComponent(leftPanel);
+        splitPane.setLeftComponent(leftPanel);
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
         rightPanel.setLayout(rightPanelLayout);
@@ -102,7 +102,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
             .addGap(0, 628, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setRightComponent(rightPanel);
+        splitPane.setRightComponent(rightPanel);
 
         searchTextField.setText(" ");
 
@@ -113,7 +113,8 @@ public class DisplayDicPanel extends javax.swing.JPanel {
             }
         });
 
-        showToggleButton.setText("jToggleButton1");
+        showToggleButton.setSelected(true);
+        showToggleButton.setText("Word list");
         showToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showToggleButtonActionPerformed(evt);
@@ -155,10 +156,10 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addComponent(splitPane)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(openButton)
-                .addGap(46, 46, 46)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
@@ -166,10 +167,10 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 .addComponent(pageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(totalPageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 301, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 351, Short.MAX_VALUE)
                 .addComponent(languageComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(showToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(showToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -186,20 +187,31 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1)
+                .addComponent(splitPane)
                 .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void languageComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_languageComboBoxActionPerformed
-        setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        dic = DicManager.getDictionary(DicManager.Language.valueOf(languageComboBox.getSelectedItem().toString()));
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        languageComboBox.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        dic = DicManager.getDictionary(DicManager.Language.valueOf(languageComboBox.getSelectedItem().toString()));
+                    }
+                });
+        languageComboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_languageComboBoxActionPerformed
 
     private void showToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showToggleButtonActionPerformed
+
         if (showToggleButton.isSelected()) {
+            splitPane.setDividerLocation(0.75f);
+
         } else {
+            splitPane.setDividerLocation(1.0f);
         }
     }//GEN-LAST:event_showToggleButtonActionPerformed
 
@@ -301,7 +313,6 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JComboBox languageComboBox;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JButton openButton;
@@ -309,6 +320,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private javax.swing.JPanel rightPanel;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JToggleButton showToggleButton;
+    private javax.swing.JSplitPane splitPane;
     private javax.swing.JLabel totalPageLabel;
     // End of variables declaration//GEN-END:variables
 }
