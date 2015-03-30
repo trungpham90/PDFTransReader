@@ -42,9 +42,10 @@ public class PDFPanel extends JPanel {
         drawer.setHighlight(list);
     }
     
-    public void setHighLight(boolean on){
-        drawer.isHighLight(on);
+    public void clearHighLight(){
+        drawer.clearHighLight();
     }
+       
     
     /**
      * This will set the page that should be displayed in this panel.
@@ -53,7 +54,7 @@ public class PDFPanel extends JPanel {
      */
     public void setPage(PDPage pdfPage) {
         page = pdfPage;
-        drawer.isHighLight(false);//Turn off highlight when turn page
+        drawer.clearHighLight();//Turn off highlight when turn page
         PDRectangle cropBox = page.findCropBox();
         drawDimension = cropBox.createDimension();
         int rotation = page.findRotation();

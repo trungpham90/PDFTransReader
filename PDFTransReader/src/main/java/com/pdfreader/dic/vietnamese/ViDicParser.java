@@ -26,7 +26,7 @@ public class ViDicParser implements IDic {
     private static ViDicParser instance = new ViDicParser();
 
     private ViDicParser() {
-        
+
         init();
     }
 
@@ -61,20 +61,20 @@ public class ViDicParser implements IDic {
                 root.nxt.put(c, new Node(c));
             }
             node = buildTree(cur, 0, root.nxt.get(c));
-            String[]tmp = line.split(" ");
-            for(String word : tmp){
+            String[] tmp = line.split(" ");
+            for (String word : tmp) {
                 boolean twoLine = word.endsWith("-");
                 boolean nxtLine = word.endsWith("+");
-                if(twoLine){
+                if (twoLine || nxtLine) {
                     word = word.substring(0, word.length() - 1);
                 }
                 node.definition.append(word).append(" ");
-                if(twoLine){
+                if (twoLine) {
                     node.definition.append("\n").append("\n");
-                }else if(nxtLine){
+                } else if (nxtLine) {
                     node.definition.append("\n");
                 }
-                
+
             }
             line = scanner.nextLine();
         }

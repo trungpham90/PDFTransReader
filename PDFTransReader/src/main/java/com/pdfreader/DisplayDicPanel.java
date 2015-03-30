@@ -37,7 +37,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private PDFViewerPanel panel;
     private int page = 0;
     private int totalPage = 0;
-    private IDic  dic;
+    private IDic dic;
 
     /**
      * Creates new form DisplayDicPanel
@@ -245,24 +245,28 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     }
 
                     @Override
-                    public void doubleClickTrigger(int x, int y) {
-                        try {
-                            PDFWord word = reader.getWordAt(page, x, y);
-                            if (word != null) {
-                                DicVO content = dic.getWordDefinition(word.getWord());
-                                if (content != null) {
-                                    dicDialog.setContent(content);
+                    public void clickTrigger(int count, int x, int y) {
+                        if (count > 1) {
+                            try {
+                                PDFWord word = reader.getWordAt(page, x, y);
+                                if (word != null) {
+                                    DicVO content = dic.getWordDefinition(word.getWord());
+                                    if (content != null) {
+                                        dicDialog.setContent(content);
 
-                                    dicDialog.setLocation(MouseInfo.getPointerInfo().getLocation());
-                                    dicDialog.setVisible(true);
+                                        dicDialog.setLocation(MouseInfo.getPointerInfo().getLocation());
+                                        dicDialog.setVisible(true);
+                                    }
+                                    List<PDFWord> list = new ArrayList();
+                                    list.add(word);
+                                    panel.setHighLight(list);
+                                    panel.repaint();
                                 }
-                                List<PDFWord> list = new ArrayList();
-                                list.add(word);
-                                panel.setHighLight(list);
-                                panel.repaint();
-                            }
 
-                        } catch (IOException ex) {
+                            } catch (IOException ex) {
+                            }
+                        } else {
+                            panel.clearHighLight();
                         }
                     }
                 });

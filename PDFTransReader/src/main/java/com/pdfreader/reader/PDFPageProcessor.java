@@ -115,21 +115,21 @@ class PDFPageProcessor {
                 //System.out.println(str + " " + pos.getWidthOfSpace() + " " + getSpacingTolerance());
                 if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
                     if (word.length() > 0) {
-                        if (!map.containsKey(startY)) {
-                            map.put(startY, new ArrayList());
+                        if (!map.containsKey(lastY)) {
+                            map.put(lastY, new ArrayList());
                         }
                         //System.out.println(startY + " " + word.toString());
-                        map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
+                        map.get(lastY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
                     startX = -1;
                     word = new StringBuilder();
                 } else if (space || (lastY >= 0 && lastY != pos.getY())) {
                     if (word.length() > 0) {
-                        if (!map.containsKey(startY)) {
-                            map.put(startY, new ArrayList());
+                        if (!map.containsKey(lastY)) {
+                            map.put(lastY, new ArrayList());
                         }
                         //System.out.println(startY + " " + word.toString() );
-                        map.get(startY).add(new PDFWord(startX, startY, width, height, word.toString()));
+                        map.get(lastY).add(new PDFWord(startX, startY, width, height, word.toString()));
                     }
                     startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);
                     startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
@@ -155,7 +155,7 @@ class PDFPageProcessor {
                 lastX = pos.getX();
                 lastY = pos.getY();
                 lastSize = MatchedCharacterUtil.getWidth(pos);
-
+               
             }
 
         }
