@@ -5,23 +5,26 @@
 package com.pdfreader.viewer;
 
 import com.pdfreader.dic.DicVO;
-import java.awt.Point;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.HashSet;
 import java.util.Scanner;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.text.DefaultEditorKit;
 
 /**
  *
  * @author Trung Pham
  */
-public class PDFDicDialog extends javax.swing.JDialog {
+public class PDFDicDialog extends javax.swing.JDialog implements IDicDialogSubject {
 
     /**
      * Creates new form PDFDicDialog
      */
+    public static final String ADD_TO_WORD_LIST = "Add to word list";
+    public static final String REMOVE_FROM_WORD_LIST = "Remove from word list";
+    private DicVO word;
+    private HashSet<IDicDialogListener> listeners = new HashSet();
+
     public PDFDicDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         setUndecorated(true);
@@ -32,16 +35,30 @@ public class PDFDicDialog extends javax.swing.JDialog {
     private void init() {
         dicPane.setContentType("text/html");
         addWindowFocusListener(new WindowFocusListener() {
+            @Override
             public void windowGainedFocus(WindowEvent e) {
             }
 
+            @Override
             public void windowLostFocus(WindowEvent e) {
                 setVisible(false);
             }
         });
     }
 
+    public void setAddButtonTitle(String title) {
+        addButton.setText(title);
+    }
+
+    public String getWord() {
+        if (word == null) {
+            return null;
+        }
+        return word.getWord();
+    }
+
     public void setContent(DicVO content) {
+        word = content;
         StringBuilder builder = new StringBuilder();
         Scanner scanner = new Scanner(content.getContent());
         wordLabel.setText(content.getWord());
@@ -54,6 +71,7 @@ public class PDFDicDialog extends javax.swing.JDialog {
         dicPane.validate();
         dicPane.repaint();
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMinimum());
                 scrollPane.getHorizontalScrollBar().setValue(scrollPane.getHorizontalScrollBar().getMinimum());
@@ -125,7 +143,7 @@ public class PDFDicDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
+        notifyAddButtonListener();
     }//GEN-LAST:event_addButtonActionPerformed
 
     /**
@@ -157,6 +175,7 @@ public class PDFDicDialog extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 PDFDicDialog dialog = new PDFDicDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -175,4 +194,21 @@ public class PDFDicDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JLabel wordLabel;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void addListener(IDicDialogListener lis) {
+        listeners.add(lis);
+    }
+
+    @Override
+    public void removeListener(IDicDialogListener lis) {
+        listeners.remove(lis);
+    }
+
+    @Override
+    public void notifyAddButtonListener() {
+        for (IDicDialogListener lis : listeners) {
+            lis.addButtonClick();
+        }
+    }
 }

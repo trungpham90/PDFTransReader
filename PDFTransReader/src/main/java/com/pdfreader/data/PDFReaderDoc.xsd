@@ -6,6 +6,42 @@ and open the template in the editor.
 
 <xs:schema version="1.0"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.pdfreader.com/PDFReaderDoc"
+           xmlns:tns="http://www.pdfreader.com/PDFReaderDoc"
            elementFormDefault="qualified">
+    
+    <xs:complexType name="PDFWordList">
+        <xs:sequence>
+            <xs:element name= "Word" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>        
+    </xs:complexType>
+    
+    <xs:complexType name="PDFDocSummary">
+        <xs:sequence>
+            <xs:element name= "Sentence" type="tns:PDFSentence" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>        
+    </xs:complexType>
 
+    <xs:complexType name="PDFSentence">
+        <xs:sequence>
+            <xs:element name= "Sentence" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>        
+        <xs:attribute name="Page" type="xs:int"/>   
+    </xs:complexType>
+    
+    <xs:complexType name="PDFMetadata">
+        <xs:sequence>
+            <xs:element name= "Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>        
+    </xs:complexType>
+    
+    <xs:complexType name="PDFReaderDocument">
+        <xs:sequence>
+            <xs:element name="PDFWordList" type="tns:PDFWordList" minOccurs="0" maxOccurs="1"/>  
+            <xs:element name="PDFDocSummary" type="tns:PDFDocSummary" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="PDFMetadata" type="tns:PDFMetadata" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>                
+    </xs:complexType>   
+		
+    <xs:element name="PDFReaderDocument"  type="tns:PDFReaderDocument"/>   
 </xs:schema>

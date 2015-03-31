@@ -4,11 +4,13 @@
  */
 package com.pdfreader;
 
+import com.pdfreader.data.PDFReaderWorkSpace;
 import com.pdfreader.dic.DicManager;
 import com.pdfreader.dic.DicVO;
 import com.pdfreader.dic.IDic;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
+import com.pdfreader.viewer.IDicDialogListener;
 import com.pdfreader.viewer.PDFDicDialog;
 import com.pdfreader.viewer.PDFViewerPanel;
 import java.awt.BorderLayout;
@@ -35,6 +37,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private PDFDicDialog dicDialog;
     private PDFFileReader reader;
     private PDFViewerPanel panel;
+    private PDFReaderWorkSpace workspace;
     private int page = 0;
     private int totalPage = 0;
     private IDic dic;
@@ -53,6 +56,21 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         languageComboBox.setSelectedItem(DicManager.Language.English);
         languageComboBox.revalidate();
         dic = DicManager.getDictionary(DicManager.Language.English);
+        dicDialog.addListener(new IDicDialogListener() {
+
+            @Override
+            public void addButtonClick() {
+                if(workspace != null){
+                    String word = dicDialog.getWord();
+                    if(workspace.containsWord(word)){
+                        workspace.removeWordFromDic(word);
+                    }else{
+                        workspace.addWordToDic(word);
+                    }
+                }
+            }
+        });
+        
     }
 
     private void setPage(int num) {
@@ -228,7 +246,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
 
                 reader = new PDFFileReader(file);
                 panel = new PDFViewerPanel();
-
+                workspace = new PDFReaderWorkSpace();
                 page = 0;
                 totalPage = reader.getNumPages();
                 totalPageLabel.setText("/ " + totalPage);
@@ -252,6 +270,11 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                 if (word != null) {
                                     DicVO content = dic.getWordDefinition(word.getWord());
                                     if (content != null) {
+                                        if(workspace.containsWord(content.getWord())){
+                                            dicDialog.setAddButtonTitle(PDFDicDialog.REMOVE_FROM_WORD_LIST);
+                                        }else{
+                                            dicDialog.setAddButtonTitle(PDFDicDialog.ADD_TO_WORD_LIST);
+                                        }
                                         dicDialog.setContent(content);
 
                                         dicDialog.setLocation(MouseInfo.getPointerInfo().getLocation());
