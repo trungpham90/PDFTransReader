@@ -6,6 +6,7 @@ package com.pdfreader.data;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  *
@@ -41,5 +42,11 @@ public class PDFReaderWorkSpace {
             this.content = content;
             this.page = page;
         }
+    }
+    
+    public List<String> getWordList(){
+        List<String> result = new ArrayList();//Defensive copy, avoid modify word list content outside of this class
+        result.addAll(dic);
+        return result;
     }
 }

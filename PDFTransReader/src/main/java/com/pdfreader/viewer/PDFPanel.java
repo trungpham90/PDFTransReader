@@ -53,6 +53,9 @@ public class PDFPanel extends JPanel {
      * @param pdfPage The page to draw.
      */
     public void setPage(PDPage pdfPage) {
+        if(pdfPage ==null){
+            throw new NullPointerException("Error! Passing null page into PDFPanel");
+        }
         page = pdfPage;
         drawer.clearHighLight();//Turn off highlight when turn page
         PDRectangle cropBox = page.findCropBox();
