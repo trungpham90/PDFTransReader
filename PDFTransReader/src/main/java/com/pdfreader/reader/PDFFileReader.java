@@ -99,10 +99,25 @@ public class PDFFileReader {
         System.out.println("STRING " + builder.toString());
         return list;
     }
-
+    /**
+     * Get word a specified position
+     * @param page
+     * @param x
+     * @param y
+     * @return
+     * @throws IOException 
+     */
     public PDFWord getWordAt(int page, int x, int y) throws IOException {
         PDFWord word = processor.getWordAt(x, y);
         System.out.println("Word " + word);
         return word;
+    }
+    /**
+     * Get all words in this page, matching a specific word
+     * @param word
+     * @return 
+     */
+    public List<PDFWord> getMatchingWord(String word) {
+        return processor.getMatchingWord(word);
     }
 }

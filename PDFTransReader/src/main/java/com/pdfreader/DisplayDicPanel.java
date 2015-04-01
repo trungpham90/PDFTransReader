@@ -13,13 +13,17 @@ import com.pdfreader.reader.PDFWord;
 import com.pdfreader.viewer.IDicDialogListener;
 import com.pdfreader.viewer.PDFDicDialog;
 import com.pdfreader.viewer.PDFViewerPanel;
+import com.pdfreader.viewer.wordlist.IWordListPanelListener;
+import com.pdfreader.viewer.wordlist.WordListPanel;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.DefaultComboBoxModel;
@@ -33,14 +37,16 @@ import org.apache.pdfbox.util.ExtensionFileFilter;
  * @author Trung Pham
  */
 public class DisplayDicPanel extends javax.swing.JPanel {
-
+    
     private PDFDicDialog dicDialog;
     private PDFFileReader reader;
-    private PDFViewerPanel panel;
+    private PDFViewerPanel viewPanel;
     private PDFReaderWorkSpace workspace;
+    private WordListPanel listPanel;
     private int page = 0;
     private int totalPage = 0;
     private IDic dic;
+    private Map<String, List<PDFWord>> wordMap;
 
     /**
      * Creates new form DisplayDicPanel
@@ -50,37 +56,79 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         initComponents();
         init();
     }
-
+    
     private void init() {
         languageComboBox.setModel(new DefaultComboBoxModel(DicManager.Language.values()));
         languageComboBox.setSelectedItem(DicManager.Language.English);
         languageComboBox.revalidate();
+        listPanel = new WordListPanel();
+        listPanel.addListener(new IWordListPanelListener() {
+            @Override
+            public void mouseClick() {
+                String word = listPanel.getSelectedWord();
+                if (word != null) {
+                    showDicDialog(word);
+                    viewPanel.setHighLight(wordMap.get(word));
+                }
+            }
+        });
+        
+        rightPanel.add(listPanel, BorderLayout.CENTER);
         dic = DicManager.getDictionary(DicManager.Language.English);
         dicDialog.addListener(new IDicDialogListener() {
-
             @Override
             public void addButtonClick() {
-                if(workspace != null){
+                if (workspace != null) {
                     String word = dicDialog.getWord();
-                    if(workspace.containsWord(word)){
+                    if (workspace.containsWord(word)) {
+                        wordMap.remove(word);
                         workspace.removeWordFromDic(word);
-                    }else{
+                        listPanel.removeWord(word);
+                    } else {
+                        List<PDFWord> list = reader.getMatchingWord(word);
+                        if(!list.isEmpty()){
+                            wordMap.put(word, list);
+                        }
                         workspace.addWordToDic(word);
+                        listPanel.addWord(word);
                     }
                 }
             }
         });
         
     }
-
+    
+    private void showDicDialog(String word) {
+        DicVO content = dic.getWordDefinition(word);
+        if (content != null) {
+            if (workspace.containsWord(content.getWord())) {
+                dicDialog.setAddButtonTitle(PDFDicDialog.REMOVE_FROM_WORD_LIST);
+            } else {
+                dicDialog.setAddButtonTitle(PDFDicDialog.ADD_TO_WORD_LIST);
+            }
+            dicDialog.setContent(content);
+            
+            dicDialog.setLocation(MouseInfo.getPointerInfo().getLocation());
+            dicDialog.setVisible(true);
+        }
+    }
+    
     private void setPage(int num) {
         try {
             page = num;
-            panel.setPage(reader.getPage(page));
+            viewPanel.setPage(reader.getPage(page));
             pageTextField.setText("" + (page + 1));
+            wordMap = new HashMap();
+            for (String word : workspace.getWordList()) {
+                List<PDFWord> list = reader.getMatchingWord(word);
+                if (!list.isEmpty()) {
+                    wordMap.put(word, list);
+                }
+            }
+            listPanel.populateListContent(new ArrayList(wordMap.keySet()));
         } catch (IOException ex) {
         }
-
+        
     }
 
     /**
@@ -109,17 +157,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         leftPanel.setLayout(new java.awt.BorderLayout());
         splitPane.setLeftComponent(leftPanel);
 
-        javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
-        rightPanel.setLayout(rightPanelLayout);
-        rightPanelLayout.setHorizontalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 156, Short.MAX_VALUE)
-        );
-        rightPanelLayout.setVerticalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 628, Short.MAX_VALUE)
-        );
-
+        rightPanel.setLayout(new java.awt.BorderLayout());
         splitPane.setRightComponent(rightPanel);
 
         searchTextField.setText(" ");
@@ -205,7 +243,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(splitPane)
+                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -222,19 +260,19 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 });
         languageComboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_languageComboBoxActionPerformed
-
+    
     private void showToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showToggleButtonActionPerformed
-
+        
         if (showToggleButton.isSelected()) {
             splitPane.setDividerLocation(0.75f);
-
+            
         } else {
             splitPane.setDividerLocation(1.0f);
         }
     }//GEN-LAST:event_showToggleButtonActionPerformed
-
+    
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-
+        
         JFileChooser chooser = new JFileChooser();
         ExtensionFileFilter pdfFilter = new ExtensionFileFilter(new String[]{"PDF"}, "PDF Files");
         chooser.setFileFilter(pdfFilter);
@@ -243,59 +281,48 @@ public class DisplayDicPanel extends javax.swing.JPanel {
             try {
                 File file = chooser.getSelectedFile();
                 setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
+                
                 reader = new PDFFileReader(file);
-                panel = new PDFViewerPanel();
+                viewPanel = new PDFViewerPanel();
                 workspace = new PDFReaderWorkSpace();
                 page = 0;
                 totalPage = reader.getNumPages();
                 totalPageLabel.setText("/ " + totalPage);
                 pageTextField.setText("1");
-                panel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
+                viewPanel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
                     @Override
                     public void selectionTrigger(int x1, int y1, int x2, int y2) {
                         try {
                             List<PDFWord> list = reader.getStringAt(page, x1, y1, x2, y2);
-                            panel.setHighLight(list);
-                            panel.repaint();
+                            viewPanel.setHighLight(list);
+                            viewPanel.repaint();
                         } catch (IOException ex) {
                         }
                     }
-
+                    
                     @Override
                     public void clickTrigger(int count, int x, int y) {
                         if (count > 1) {
                             try {
                                 PDFWord word = reader.getWordAt(page, x, y);
                                 if (word != null) {
-                                    DicVO content = dic.getWordDefinition(word.getWord());
-                                    if (content != null) {
-                                        if(workspace.containsWord(content.getWord())){
-                                            dicDialog.setAddButtonTitle(PDFDicDialog.REMOVE_FROM_WORD_LIST);
-                                        }else{
-                                            dicDialog.setAddButtonTitle(PDFDicDialog.ADD_TO_WORD_LIST);
-                                        }
-                                        dicDialog.setContent(content);
-
-                                        dicDialog.setLocation(MouseInfo.getPointerInfo().getLocation());
-                                        dicDialog.setVisible(true);
-                                    }
+                                    showDicDialog(word.getWord());
                                     List<PDFWord> list = new ArrayList();
                                     list.add(word);
-                                    panel.setHighLight(list);
-                                    panel.repaint();
+                                    viewPanel.setHighLight(list);
+                                    viewPanel.repaint();
                                 }
-
+                                
                             } catch (IOException ex) {
                             }
                         } else {
-                            panel.clearHighLight();
+                            viewPanel.clearHighLight();
                         }
                     }
                 });
                 setPage(0);
                 leftPanel.removeAll();
-                JScrollPane scroll = new JScrollPane(panel);
+                JScrollPane scroll = new JScrollPane(viewPanel);
                 scroll.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);//Improve the performance significantly!
 
                 leftPanel.add(scroll, BorderLayout.CENTER);
@@ -304,10 +331,10 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             } catch (IOException ex) {
             }
-
+            
         }
     }//GEN-LAST:event_openButtonActionPerformed
-
+    
     private void pageTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageTextFieldActionPerformed
         String text = pageTextField.getText();
         try {
@@ -320,19 +347,19 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         } catch (NumberFormatException ex) {
             pageTextField.setText("" + (page + 1));
         }
-
+        
     }//GEN-LAST:event_pageTextFieldActionPerformed
-
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (page > 0) {
             setPage(page - 1);
         }
-
-
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        
         if (page + 1 < totalPage) {
             setPage(page + 1);
         }
