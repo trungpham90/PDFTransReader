@@ -142,6 +142,7 @@ class PDFPageProcessor {
                 if (!map.containsKey(lastY)) {
                     map.put(lastY, new ArrayList());
                 }
+                width += lastX - startX;
                 PDFWord w = new PDFWord(startX, startY, width, height, word.toString());
                 map.get(lastY).add(w);
                 buildTree(w);
@@ -161,6 +162,7 @@ class PDFPageProcessor {
                         if (!map.containsKey(lastY)) {
                             map.put(lastY, new ArrayList());
                         }
+                        width += lastX - startX;
                         PDFWord w = new PDFWord(startX, startY, width, height, word.toString());
                         map.get(lastY).add(w);
                         buildTree(w);
@@ -172,11 +174,12 @@ class PDFPageProcessor {
                         if (!map.containsKey(lastY)) {
                             map.put(lastY, new ArrayList());
                         }
+                        width += lastX - startX;
                         PDFWord w = new PDFWord(startX, startY, width, height, word.toString());
                         map.get(lastY).add(w);
                         buildTree(w);
                     }
-                    startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);
+                    startX = pos.getX() ;
                     startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
                     width = MatchedCharacterUtil.getWidth(pos);
                     height = MatchedCharacterUtil.getHeight(pos);
@@ -186,12 +189,12 @@ class PDFPageProcessor {
 
                 } else {
                     if (startX == -1) {
-                        startX = pos.getX() - MatchedCharacterUtil.getWidth(pos);
+                        startX = pos.getX();
                         startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
                         width = MatchedCharacterUtil.getWidth(pos);
                         height = MatchedCharacterUtil.getHeight(pos);
                     } else {
-                        width += MatchedCharacterUtil.getWidth(pos);
+                        width = MatchedCharacterUtil.getWidth(pos);
                         height = Math.max(height, MatchedCharacterUtil.getHeight(pos));
                     }
 
