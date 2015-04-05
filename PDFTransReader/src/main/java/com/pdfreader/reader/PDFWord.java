@@ -5,7 +5,7 @@
 package com.pdfreader.reader;
 
 /**
- *
+ * This class contains a word and its position in the pdf page
  * @author Trung Pham
  */
 public class PDFWord {

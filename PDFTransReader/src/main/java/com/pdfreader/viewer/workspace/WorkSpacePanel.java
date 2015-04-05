@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.pdfreader.viewer.wordlist;
+package com.pdfreader.viewer.workspace;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,12 +12,12 @@ import javax.swing.DefaultListModel;
  *
  * @author Trung Pham
  */
-public class WordListPanel extends javax.swing.JPanel implements IWordListPanelSubject {
+public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePanelSubject {
 
-    private HashSet<IWordListPanelListener> listeners = new HashSet();
+    private HashSet<IWorkSpacePanelListener> listeners = new HashSet();
     private DefaultListModel<String> model;
 
-    public WordListPanel() {
+    public WorkSpacePanel() {
         initComponents();
     }
 
@@ -58,8 +58,10 @@ public class WordListPanel extends javax.swing.JPanel implements IWordListPanelS
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         wordList = new javax.swing.JList();
+        summaryPanel = new javax.swing.JPanel();
 
         wordList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         wordList.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -69,15 +71,30 @@ public class WordListPanel extends javax.swing.JPanel implements IWordListPanelS
         });
         jScrollPane2.setViewportView(wordList);
 
+        jTabbedPane1.addTab("Word List", jScrollPane2);
+
+        javax.swing.GroupLayout summaryPanelLayout = new javax.swing.GroupLayout(summaryPanel);
+        summaryPanel.setLayout(summaryPanelLayout);
+        summaryPanelLayout.setHorizontalGroup(
+            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 234, Short.MAX_VALUE)
+        );
+        summaryPanelLayout.setVerticalGroup(
+            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 444, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Summary", summaryPanel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -86,22 +103,24 @@ public class WordListPanel extends javax.swing.JPanel implements IWordListPanelS
     }//GEN-LAST:event_wordListMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel summaryPanel;
     private javax.swing.JList wordList;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void addListener(IWordListPanelListener lis) {
+    public void addListener(IWorkSpacePanelListener lis) {
         listeners.add(lis);
     }
 
     @Override
-    public void removeListener(IWordListPanelListener lis) {
+    public void removeListener(IWorkSpacePanelListener lis) {
         listeners.remove(lis);
     }
 
     @Override
     public void notifyListener() {
-        for (IWordListPanelListener list : listeners) {
+        for (IWorkSpacePanelListener list : listeners) {
             list.mouseClick();
         }
     }

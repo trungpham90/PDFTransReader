@@ -17,8 +17,9 @@ import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.util.TextPosition;
 
 /**
- * This class processes whole page, identifies and stores each word in this page into
- * binary search tree and special prefix tree, which allow to advance operation.
+ * This class processes whole page, identifies and stores each word in this page
+ * into binary search tree and special prefix tree, which allow to advance
+ * operation.
  *
  * @author Trung Pham
  */
@@ -43,7 +44,14 @@ class PDFPageProcessor {
         stripper.writeText(doc, writer);
         stripper.finish();
     }
-
+    /**
+     * Get the list of word in a specific area defined by two poins (x1,y1) (x2,y2)
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return 
+     */
     public List<PDFWord> getStringAt(float x1, float y1, float x2, float y2) {
         List<PDFWord> list = new ArrayList();
         Float start = null;
@@ -53,14 +61,20 @@ class PDFPageProcessor {
         if (start == null) {
             return list;
         }
+        boolean outOfRange = false;
         for (Float a : map.tailMap(start, true).keySet()) {
-            if (a > y2) {
-                break;
-            }
             for (PDFWord word : map.get(a)) {
                 if (MatchedCharacterUtil.isContains(word, x1, y1, x2, y2)) {
                     list.add(word);
+                } else {
+                    if (word.getY() > y2) {
+                        outOfRange = true;
+                        break;
+                    }
                 }
+            }
+            if (outOfRange) {
+                break;
             }
         }
 
@@ -156,7 +170,7 @@ class PDFPageProcessor {
                 boolean space = false;
                 if (lastY == pos.getY()) {
                     space = (pos.getX() - lastX - lastSize) >= getAverageCharTolerance();
-                }                
+                }
                 if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
                     if (word.length() > 0) {
                         if (!map.containsKey(lastY)) {
@@ -179,7 +193,7 @@ class PDFPageProcessor {
                         map.get(lastY).add(w);
                         buildTree(w);
                     }
-                    startX = pos.getX() ;
+                    startX = pos.getX();
                     startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
                     width = MatchedCharacterUtil.getWidth(pos);
                     height = MatchedCharacterUtil.getHeight(pos);

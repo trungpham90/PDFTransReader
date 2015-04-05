@@ -1,14 +1,15 @@
 package com.pdfreader.reader;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.security.InvalidParameterException;
 import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.pdmodel.interactive.action.PDAdditionalActions;
+import org.apache.pdfbox.pdmodel.interactive.action.PDPageAdditionalActions;
+import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * Process a PDF file
@@ -16,16 +17,17 @@ import org.apache.pdfbox.util.PDFTextStripper;
  * @author Trung Pham
  */
 public class PDFFileReader {
-
+    
     private File file;
     private PDDocument doc;
     private PDFPageProcessor processor = null;
+    private int zoomRate = -1;//Default size;
 
     public PDFFileReader(String location) throws IOException {
-
+        
         this(new File(location));
     }
-
+    
     public PDFFileReader(File file) throws IOException {
         if (file == null || !file.exists()) {
             throw new InvalidParameterException("File not found!");
@@ -33,48 +35,26 @@ public class PDFFileReader {
         this.file = file;
         init();
     }
-
+    
     private void init() throws IOException {
         doc = PDDocument.load(file);
-
     }
-
-    public String getContent(int pageFrom, int pageTo) throws IOException {
-        PDDocument pd = PDDocument.load(file);
-        if (pageFrom < 0 || pageTo > pd.getNumberOfPages()) {
-            throw new InvalidParameterException("Invalid page number!");
-        }
-
-
-        StringWriter stringWriter = new StringWriter();
-        BufferedWriter writer = new BufferedWriter(stringWriter);
-        PDFTextStripper stripper = new PDFTextStripper();
-        stripper.setStartPage(pageFrom);
-        stripper.setEndPage(pageTo);
-        stripper.writeText(pd, writer);
-
-        String result = stringWriter.toString();
-
-        if (pd != null) {
-            pd.close();
-        }
-        writer.close();
-        return result;
-    }
-
+    
+    
+    
     public int getNumPages() {
         return doc.getNumberOfPages();
     }
-
+    
     public PDPage getPage(int num) throws IOException {
-        PDPage page = (PDPage) doc.getDocumentCatalog().getAllPages().get(num);
+        PDPage page = (PDPage) doc.getDocumentCatalog().getAllPages().get(num);        
+        
         processor = new PDFPageProcessor(num, doc);
-        System.out.println(num);
         return page;
     }
 
     /**
-     * Get String at specified position
+     * Get list of word at specified position
      *
      * @param page
      * @param x1
@@ -84,7 +64,7 @@ public class PDFFileReader {
      * @throws IOException
      */
     public List<PDFWord> getStringAt(int page, int x1, int y1, int x2, int y2) throws IOException {
-
+        
         List<PDFWord> list = processor.getStringAt(x1, y1, x2, y2);
         StringBuilder builder = new StringBuilder();
         float lastY = -1;
@@ -99,23 +79,27 @@ public class PDFFileReader {
         System.out.println("STRING " + builder.toString());
         return list;
     }
+
     /**
      * Get word a specified position
+     *
      * @param page
      * @param x
      * @param y
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public PDFWord getWordAt(int page, int x, int y) throws IOException {
         PDFWord word = processor.getWordAt(x, y);
         System.out.println("Word " + word);
         return word;
     }
+
     /**
      * Get all words in this page, matching a specific word
+     *
      * @param word
-     * @return 
+     * @return
      */
     public List<PDFWord> getMatchingWord(String word) {
         return processor.getMatchingWord(word);

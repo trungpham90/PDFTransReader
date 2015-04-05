@@ -13,8 +13,8 @@ import com.pdfreader.reader.PDFWord;
 import com.pdfreader.viewer.IDicDialogListener;
 import com.pdfreader.viewer.PDFDicDialog;
 import com.pdfreader.viewer.PDFViewerPanel;
-import com.pdfreader.viewer.wordlist.IWordListPanelListener;
-import com.pdfreader.viewer.wordlist.WordListPanel;
+import com.pdfreader.viewer.workspace.IWorkSpacePanelListener;
+import com.pdfreader.viewer.workspace.WorkSpacePanel;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
@@ -42,7 +42,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     private PDFFileReader reader;
     private PDFViewerPanel viewPanel;
     private PDFReaderWorkSpace workspace;
-    private WordListPanel listPanel;
+    private WorkSpacePanel listPanel;
     private int page = 0;
     private int totalPage = 0;
     private IDic dic;
@@ -61,8 +61,8 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         languageComboBox.setModel(new DefaultComboBoxModel(DicManager.Language.values()));
         languageComboBox.setSelectedItem(DicManager.Language.English);
         languageComboBox.revalidate();
-        listPanel = new WordListPanel();
-        listPanel.addListener(new IWordListPanelListener() {
+        listPanel = new WorkSpacePanel();
+        listPanel.addListener(new IWorkSpacePanelListener() {
             @Override
             public void mouseClick() {
                 String word = listPanel.getSelectedWord();
@@ -115,7 +115,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
     
     private void setPage(int num) {
         try {
-            page = num;
+            page = num;           
             viewPanel.setPage(reader.getPage(page));
             pageTextField.setText("" + (page + 1));
             wordMap = new HashMap();
@@ -288,7 +288,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 File file = chooser.getSelectedFile();
                 setCursor(new Cursor(Cursor.WAIT_CURSOR));
                 
-                reader = new PDFFileReader(file);
+                reader = new PDFFileReader(file);                
                 viewPanel = new PDFViewerPanel();
                 workspace = new PDFReaderWorkSpace();
                 page = 0;
