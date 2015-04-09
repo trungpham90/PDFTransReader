@@ -27,14 +27,14 @@
               <Component id="pageTextField" min="-2" pref="53" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="totalPageLabel" min="-2" pref="48" max="-2" attributes="0"/>
-              <EmptySpace pref="348" max="32767" attributes="0"/>
+              <EmptySpace pref="355" max="32767" attributes="0"/>
               <Component id="languageComboBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="showToggleButton" min="-2" pref="95" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="searchTextField" min="-2" pref="119" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="showToggleButton" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -110,7 +110,7 @@
     <Component class="javax.swing.JToggleButton" name="showToggleButton">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="Word list"/>
+        <Property name="text" type="java.lang.String" value="Learning Corner"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showToggleButtonActionPerformed"/>

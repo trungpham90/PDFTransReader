@@ -3,6 +3,7 @@ package com.pdfreader.reader;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,17 +18,17 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  * @author Trung Pham
  */
 public class PDFFileReader {
-    
+
     private File file;
     private PDDocument doc;
     private PDFPageProcessor processor = null;
-    private int zoomRate = -1;//Default size;
+    private int zoomRate = -1;//Default size;    
 
     public PDFFileReader(String location) throws IOException {
-        
+
         this(new File(location));
     }
-    
+
     public PDFFileReader(File file) throws IOException {
         if (file == null || !file.exists()) {
             throw new InvalidParameterException("File not found!");
@@ -35,20 +36,18 @@ public class PDFFileReader {
         this.file = file;
         init();
     }
-    
+
     private void init() throws IOException {
         doc = PDDocument.load(file);
     }
-    
-    
-    
+
     public int getNumPages() {
         return doc.getNumberOfPages();
     }
-    
+
     public PDPage getPage(int num) throws IOException {
-        PDPage page = (PDPage) doc.getDocumentCatalog().getAllPages().get(num);        
-        
+        PDPage page = (PDPage) doc.getDocumentCatalog().getAllPages().get(num);
+
         processor = new PDFPageProcessor(num, doc);
         return page;
     }
@@ -64,20 +63,8 @@ public class PDFFileReader {
      * @throws IOException
      */
     public List<PDFWord> getStringAt(int page, int x1, int y1, int x2, int y2) throws IOException {
-        
-        List<PDFWord> list = processor.getStringAt(x1, y1, x2, y2);
-        StringBuilder builder = new StringBuilder();
-        float lastY = -1;
-        for (PDFWord word : list) {
-            if (lastY != -1 && lastY != word.getY()) {
-                builder.append("\n");
-            } else {
-                builder.append(" ");
-            }
-            builder.append(word.getWord());
-        }
-        System.out.println("STRING " + builder.toString());
-        return list;
+        List<PDFWord> selectedList = processor.getStringAt(x1, y1, x2, y2);
+        return selectedList;
     }
 
     /**

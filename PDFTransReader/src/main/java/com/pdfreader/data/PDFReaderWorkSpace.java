@@ -5,6 +5,7 @@
 package com.pdfreader.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class PDFReaderWorkSpace {
 
     private HashSet<String> dic = new HashSet();
-    private ArrayList<PDFSentence> summary = new ArrayList();
+    private HashMap<Integer, PDFSentenceNode> nodeList = new HashMap();
 
     public void addWordToDic(String word) {
         dic.add(word);
@@ -24,29 +25,42 @@ public class PDFReaderWorkSpace {
     public void removeWordFromDic(String word) {
         dic.remove(word);
     }
-    
-    public boolean containsWord(String word){
+
+    public boolean containsWord(String word) {
         return dic.contains(word);
     }
 
-    public void addSentenceToSummary(String sentence, int page) {
-        summary.add(new PDFSentence(sentence, page));
-    }
-
-    public static class PDFSentence {
-
-        private String content;
-        private int page;
-
-        public PDFSentence(String content, int page) {
-            this.content = content;
-            this.page = page;
-        }
-    }
-    
-    public List<String> getWordList(){
+    public List<String> getWordList() {
         List<String> result = new ArrayList();//Defensive copy, avoid modify word list content outside of this class
         result.addAll(dic);
         return result;
+    }
+
+    public static class PDFSentenceNode {
+
+        private String content;
+        private int id;
+        private int page;
+        private HashMap<Integer, PDFSentenceEdge> edgeList = new HashMap();
+
+        public PDFSentenceNode(String content, int id, int page) {
+            this.content = content;
+            this.id = id;
+        }
+    }
+
+    public static class PDFSentenceEdge {
+
+        private int startID;
+        private int endID;
+        private int id;
+        private String conent;
+
+        public PDFSentenceEdge(int id, int startID, int endID, String conent) {
+            this.id = id;
+            this.startID = startID;
+            this.endID = endID;
+            this.conent = conent;
+        }
     }
 }

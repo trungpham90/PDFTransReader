@@ -4,7 +4,7 @@
  */
 package com.pdfreader.reader;
 
-import com.pdfreader.util.MatchedCharacterUtil;
+import com.pdfreader.util.PDFReaderUtil;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -64,7 +64,7 @@ class PDFPageProcessor {
         boolean outOfRange = false;
         for (Float a : map.tailMap(start, true).keySet()) {
             for (PDFWord word : map.get(a)) {
-                if (MatchedCharacterUtil.isContains(word, x1, y1, x2, y2)) {
+                if (PDFReaderUtil.isContains(word, x1, y1, x2, y2)) {
                     list.add(word);
                 } else {
                     if (word.getY() > y2) {
@@ -90,7 +90,7 @@ class PDFPageProcessor {
         if (start != null) {
             for (Float a : map.tailMap(start, true).keySet()) {
                 for (PDFWord word : map.get(a)) {
-                    if (MatchedCharacterUtil.isCorrectWord(word, x, y)) {
+                    if (PDFReaderUtil.isCorrectWord(word, x, y)) {
                         return word;
                     }
                 }
@@ -194,9 +194,9 @@ class PDFPageProcessor {
                         buildTree(w);
                     }
                     startX = pos.getX();
-                    startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
-                    width = MatchedCharacterUtil.getWidth(pos);
-                    height = MatchedCharacterUtil.getHeight(pos);
+                    startY = pos.getY() - PDFReaderUtil.getHeight(pos);
+                    width = PDFReaderUtil.getWidth(pos);
+                    height = PDFReaderUtil.getHeight(pos);
 
                     word = new StringBuilder();
                     word.append(str);
@@ -204,19 +204,19 @@ class PDFPageProcessor {
                 } else {
                     if (startX == -1) {
                         startX = pos.getX();
-                        startY = pos.getY() - MatchedCharacterUtil.getHeight(pos);
-                        width = MatchedCharacterUtil.getWidth(pos);
-                        height = MatchedCharacterUtil.getHeight(pos);
+                        startY = pos.getY() - PDFReaderUtil.getHeight(pos);
+                        width = PDFReaderUtil.getWidth(pos);
+                        height = PDFReaderUtil.getHeight(pos);
                     } else {
-                        width = MatchedCharacterUtil.getWidth(pos);
-                        height = Math.max(height, MatchedCharacterUtil.getHeight(pos));
+                        width = PDFReaderUtil.getWidth(pos);
+                        height = Math.max(height, PDFReaderUtil.getHeight(pos));
                     }
 
                     word.append(str);
                 }
                 lastX = pos.getX();
                 lastY = pos.getY();
-                lastSize = MatchedCharacterUtil.getWidth(pos);
+                lastSize = PDFReaderUtil.getWidth(pos);
 
             }
 

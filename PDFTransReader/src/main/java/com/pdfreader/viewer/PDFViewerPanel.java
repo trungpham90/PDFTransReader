@@ -65,18 +65,18 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
         }
     }
 
-    public void notifyClickListeners(int count, int x, int y) {
+    public void notifyClickListeners(MouseEvent e) {
 
         for (ViewerSelectionListener lis : listeners) {
 
-            lis.clickTrigger(count, x, y);
+            lis.clickTrigger(e);
 
         }
     }
 
     public void mouseClicked(MouseEvent e) {
-
-        notifyClickListeners(e.getClickCount(), e.getX(), e.getY());
+        
+        notifyClickListeners( e);
 
     }
 
@@ -132,6 +132,6 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
 
         public void selectionTrigger(int x1, int y1, int x2, int y2);
 
-        public void clickTrigger(int count, int x, int y);
+        public void clickTrigger(MouseEvent e);
     }
 }
