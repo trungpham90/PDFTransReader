@@ -59,11 +59,22 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pDFSummaryPanel = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         wordList = new javax.swing.JList();
-        summaryPanel = new javax.swing.JPanel();
         pDFSummaryPanel1 = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
+
+        javax.swing.GroupLayout pDFSummaryPanelLayout = new javax.swing.GroupLayout(pDFSummaryPanel);
+        pDFSummaryPanel.setLayout(pDFSummaryPanelLayout);
+        pDFSummaryPanelLayout.setHorizontalGroup(
+            pDFSummaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 476, Short.MAX_VALUE)
+        );
+        pDFSummaryPanelLayout.setVerticalGroup(
+            pDFSummaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 579, Short.MAX_VALUE)
+        );
 
         wordList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         wordList.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -74,40 +85,17 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
         jScrollPane2.setViewportView(wordList);
 
         jTabbedPane1.addTab("Word List", jScrollPane2);
-
-        javax.swing.GroupLayout pDFSummaryPanel1Layout = new javax.swing.GroupLayout(pDFSummaryPanel1);
-        pDFSummaryPanel1.setLayout(pDFSummaryPanel1Layout);
-        pDFSummaryPanel1Layout.setHorizontalGroup(
-            pDFSummaryPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 234, Short.MAX_VALUE)
-        );
-        pDFSummaryPanel1Layout.setVerticalGroup(
-            pDFSummaryPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 444, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout summaryPanelLayout = new javax.swing.GroupLayout(summaryPanel);
-        summaryPanel.setLayout(summaryPanelLayout);
-        summaryPanelLayout.setHorizontalGroup(
-            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pDFSummaryPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        summaryPanelLayout.setVerticalGroup(
-            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pDFSummaryPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Summary", summaryPanel);
+        jTabbedPane1.addTab("Summary", pDFSummaryPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -117,8 +105,8 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel;
     private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel1;
-    private javax.swing.JPanel summaryPanel;
     private javax.swing.JList wordList;
     // End of variables declaration//GEN-END:variables
 

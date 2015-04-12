@@ -29,10 +29,10 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
      * Creates new form PDFSummaryPanel
      */
     public PDFSummaryPanel() {
+        super();
         initComponents();
         init();
     }
-    private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
     // 
     private JGraphModelAdapter m_jgAdapter;
@@ -48,8 +48,8 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
         m_jgAdapter = new JGraphModelAdapter(g);
 
         JGraph jgraph = new JGraph(m_jgAdapter);
-        jgraph.setPreferredSize(DEFAULT_SIZE);
-        jgraph.setBackground(DEFAULT_BG_COLOR);
+       // jgraph.setPreferredSize(DEFAULT_SIZE);
+        jgraph.setBackground(Color.WHITE);
 
         add(jgraph, BorderLayout.CENTER);
         resize(DEFAULT_SIZE);
@@ -70,6 +70,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
         positionVertexAt("v2", 60, 200);
         positionVertexAt("v3", 310, 230);
         positionVertexAt("v4", 380, 70);
+        jgraph.revalidate();
         revalidate();
 
         // that's all there is to it!...
