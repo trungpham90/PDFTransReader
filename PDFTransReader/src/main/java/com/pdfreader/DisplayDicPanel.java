@@ -10,6 +10,7 @@ import com.pdfreader.dic.DicVO;
 import com.pdfreader.dic.IDic;
 import com.pdfreader.reader.PDFFileReader;
 import com.pdfreader.reader.PDFWord;
+import com.pdfreader.util.PDFReaderUtil;
 import com.pdfreader.viewer.IDicDialogListener;
 import com.pdfreader.viewer.PDFDicDialog;
 import com.pdfreader.viewer.PDFViewerPanel;
@@ -18,6 +19,8 @@ import com.pdfreader.viewer.workspace.WorkSpacePanel;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.MouseInfo;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
@@ -339,6 +342,15 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                             if (selectedList != null && !selectedList.isEmpty()) {
                                 JPopupMenu popup = new JPopupMenu();
                                 JMenuItem item = new JMenuItem("Add selected text to summary");
+                                item.addActionListener(new ActionListener() {
+
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        String content = PDFReaderUtil.getTextFromPDFList(selectedList);
+                                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, page);
+                                        listPanel.addSentence(node);
+                                    }
+                                });
                                 popup.add(item);
                                 popup.show(e.getComponent(), x, y);
                             }

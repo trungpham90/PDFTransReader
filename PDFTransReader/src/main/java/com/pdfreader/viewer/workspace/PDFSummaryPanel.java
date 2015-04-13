@@ -4,6 +4,7 @@
  */
 package com.pdfreader.viewer.workspace;
 
+import com.pdfreader.data.PDFReaderWorkSpace;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,11 +13,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 import org.jgraph.JGraph;
+import org.jgraph.event.GraphSelectionEvent;
+import org.jgraph.event.GraphSelectionListener;
+import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.GraphConstants;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
 /**
@@ -24,6 +27,11 @@ import org.jgrapht.graph.ListenableDirectedGraph;
  * @author Trung Pham
  */
 public class PDFSummaryPanel extends javax.swing.JPanel {
+
+    private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
+    private JGraphModelAdapter graphAdapter;
+    private JGraph graphGraphics;
+    private ListenableGraph<PDFReaderWorkSpace.PDFSentenceNode , PDFReaderWorkSpace.PDFSentenceEdge> graph;
 
     /**
      * Creates new form PDFSummaryPanel
@@ -33,60 +41,53 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
         initComponents();
         init();
     }
-    private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
-    // 
-    private JGraphModelAdapter m_jgAdapter;
 
-    /**
-     * @see java.applet.Applet#init().
-     */
     private void init() {
         // create a JGraphT graph
-        ListenableGraph g = new ListenableDirectedGraph(DefaultEdge.class);
+        graph = new ListenableDirectedGraph(DefaultEdge.class);
+
+
 
         // create a visualization using JGraph, via an adapter
-        m_jgAdapter = new JGraphModelAdapter(g);
+        graphAdapter = new JGraphModelAdapter(graph);
 
-        JGraph jgraph = new JGraph(m_jgAdapter);
-       // jgraph.setPreferredSize(DEFAULT_SIZE);
-        jgraph.setBackground(Color.WHITE);
+        graphGraphics = new JGraph(graphAdapter);
 
-        add(jgraph, BorderLayout.CENTER);
-        resize(DEFAULT_SIZE);
+        // jgraph.setPreferredSize(DEFAULT_SIZE);
+        graphGraphics.setBackground(Color.WHITE);
 
-        // add some sample data (graph manipulated via JGraphT)
-        g.addVertex("v1");
-        g.addVertex("v2");
-        g.addVertex("v3");
-        g.addVertex("v4");
-
-        g.addEdge("v1", "v2");
-        g.addEdge("v2", "v3");
-        g.addEdge("v3", "v1");
-        g.addEdge("v4", "v3");
-
-        // position vertices nicely within JGraph component
-        positionVertexAt("v1", 130, 40);
-        positionVertexAt("v2", 60, 200);
-        positionVertexAt("v3", 310, 230);
-        positionVertexAt("v4", 380, 70);
-        jgraph.revalidate();
+        add(graphGraphics, BorderLayout.CENTER);
+        graphGraphics.addGraphSelectionListener(new GraphSelectionListener() {
+            @Override
+            public void valueChanged(GraphSelectionEvent e) {
+                System.out.println(e.getCell());
+            }
+        });
+        graphGraphics.revalidate();
         revalidate();
 
         // that's all there is to it!...
     }
 
+    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
+        graph.addVertex(node);
+        
+       
+        graphGraphics.revalidate();
+        graphGraphics.repaint();
+    }
+
     private void positionVertexAt(Object vertex, int x, int y) {
-        DefaultGraphCell cell = m_jgAdapter.getVertexCell(vertex);
+        DefaultGraphCell cell = graphAdapter.getVertexCell(vertex);
         Map attr = cell.getAttributes();
-        Rectangle2D b = GraphConstants.getBounds(attr);        
+        Rectangle2D b = GraphConstants.getBounds(attr);
 
         GraphConstants.setBounds(attr, new Rectangle(x, y, (int) b.getWidth(), (int) b.getHeight()));
 
         Map cellAttr = new HashMap();
         cellAttr.put(cell, attr);
 
-        m_jgAdapter.edit(cellAttr, null, null, null);
+        graphAdapter.edit(cellAttr, null, null, null);
     }
 
     /**

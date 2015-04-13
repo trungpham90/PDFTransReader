@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -16,7 +17,8 @@ import java.util.List;
 public class PDFReaderWorkSpace {
 
     private HashSet<String> dic = new HashSet();
-    private HashMap<Integer, PDFSentenceNode> nodeList = new HashMap();
+    private HashMap<String, PDFSentenceNode> nodeList = new HashMap();
+    private ArrayList<PDFSentenceEdge> edgeList = new ArrayList();
 
     public void addWordToDic(String word) {
         dic.add(word);
@@ -36,27 +38,48 @@ public class PDFReaderWorkSpace {
         return result;
     }
 
+    public PDFSentenceNode createSentenceNode(String content, int page) {
+        UUID id = UUID.randomUUID();
+        PDFSentenceNode node = new PDFSentenceNode(content, id.toString(), page);
+        nodeList.put(id.toString(), node);
+        return node;
+    }
+
+    public PDFSentenceEdge createSentenceEdge(PDFSentenceNode start, PDFSentenceNode end, String content) {
+        UUID id = UUID.randomUUID();
+        PDFSentenceEdge edge = new PDFSentenceEdge(id.toString(), start.id, end.id, content);
+        edgeList.add(edge);
+        start.edgeMap.put(id.toString(), edge);
+        end.edgeMap.put(id.toString(), edge);
+        return edge;
+    }
+
     public static class PDFSentenceNode {
 
         private String content;
-        private int id;
+        private String id;
         private int page;
-        private HashMap<Integer, PDFSentenceEdge> edgeList = new HashMap();
+        private HashMap<String, PDFSentenceEdge> edgeMap = new HashMap();
 
-        public PDFSentenceNode(String content, int id, int page) {
+        private PDFSentenceNode(String content, String id, int page) {
             this.content = content;
             this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return content;
         }
     }
 
     public static class PDFSentenceEdge {
 
-        private int startID;
-        private int endID;
-        private int id;
+        private String startID;
+        private String endID;
+        private String id;
         private String conent;
 
-        public PDFSentenceEdge(int id, int startID, int endID, String conent) {
+        private PDFSentenceEdge(String id, String startID, String endID, String conent) {
             this.id = id;
             this.startID = startID;
             this.endID = endID;
