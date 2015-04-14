@@ -68,7 +68,7 @@ public class PDFReaderWorkSpace {
 
         @Override
         public String toString() {
-            return content;
+            return "<html>" + content + "</html>";
         }
     }
 
@@ -77,13 +77,18 @@ public class PDFReaderWorkSpace {
         private String startID;
         private String endID;
         private String id;
-        private String conent;
+        private String content;
 
-        private PDFSentenceEdge(String id, String startID, String endID, String conent) {
+        private PDFSentenceEdge(String id, String startID, String endID, String content) {
             this.id = id;
             this.startID = startID;
             this.endID = endID;
-            this.conent = conent;
+            this.content = content;
+        }
+
+        @Override
+        public String toString() {
+            return "<html>" + content + "</html>";
         }
     }
 }

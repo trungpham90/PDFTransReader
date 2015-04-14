@@ -8,13 +8,20 @@ import com.pdfreader.data.PDFReaderWorkSpace;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.SwingUtilities;
 import org.jgraph.JGraph;
+import org.jgraph.event.GraphModelEvent;
+import org.jgraph.event.GraphModelListener;
 import org.jgraph.event.GraphSelectionEvent;
 import org.jgraph.event.GraphSelectionListener;
+import org.jgraph.graph.AttributeMap;
 import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.GraphConstants;
@@ -29,9 +36,12 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 public class PDFSummaryPanel extends javax.swing.JPanel {
 
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
+    private static final Color DEFAULT_NODE_COLOR = new Color(0x01A9DB);
     private JGraphModelAdapter graphAdapter;
     private JGraph graphGraphics;
-    private ListenableGraph<PDFReaderWorkSpace.PDFSentenceNode , PDFReaderWorkSpace.PDFSentenceEdge> graph;
+    private ListenableGraph<PDFReaderWorkSpace.PDFSentenceNode, PDFReaderWorkSpace.PDFSentenceEdge> graph;
+    private static final int startX = 50, startY = 50;
+    private static final Font DEFAULT_FONT = new Font("Serif", Font.PLAIN, 12);
 
     /**
      * Creates new form PDFSummaryPanel
@@ -45,11 +55,13 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
     private void init() {
         // create a JGraphT graph
         graph = new ListenableDirectedGraph(DefaultEdge.class);
-
-
-
         // create a visualization using JGraph, via an adapter
         graphAdapter = new JGraphModelAdapter(graph);
+        graphAdapter.addGraphModelListener(new GraphModelListener() {
+            @Override
+            public void graphChanged(GraphModelEvent e) {
+            }
+        });
 
         graphGraphics = new JGraph(graphAdapter);
 
@@ -60,9 +72,45 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
         graphGraphics.addGraphSelectionListener(new GraphSelectionListener() {
             @Override
             public void valueChanged(GraphSelectionEvent e) {
-                System.out.println(e.getCell());
+                DefaultGraphCell cell = (DefaultGraphCell) e.getCell();
+                AttributeMap map = cell.getAttributes();
+                Rectangle2D b = GraphConstants.getBounds(map);
+
             }
         });
+        
+        graphGraphics.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Click!");
+                System.out.println(graphGraphics.getFirstCellForLocation(e.getX(), e.getY()));
+                
+                
+                
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+              
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+              
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+              
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+              
+            }
+        });
+        graphGraphics.setConnectable(true);
         graphGraphics.revalidate();
         revalidate();
 
@@ -71,23 +119,28 @@ public class PDFSummaryPanel extends javax.swing.JPanel {
 
     public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
         graph.addVertex(node);
+        positionVertexAt(node, startX, startY);
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {               
+                graphGraphics.refresh();
+            }
+        });    
         
-       
-        graphGraphics.revalidate();
-        graphGraphics.repaint();
     }
 
-    private void positionVertexAt(Object vertex, int x, int y) {
+    private void positionVertexAt(PDFReaderWorkSpace.PDFSentenceNode vertex, int x, int y) {
         DefaultGraphCell cell = graphAdapter.getVertexCell(vertex);
         Map attr = cell.getAttributes();
-        Rectangle2D b = GraphConstants.getBounds(attr);
-
-        GraphConstants.setBounds(attr, new Rectangle(x, y, (int) b.getWidth(), (int) b.getHeight()));
-
+        GraphConstants.setFont(attr, DEFAULT_FONT);
+        GraphConstants.setBounds(attr, new Rectangle(x, y, 200, 50));
+        GraphConstants.setBackground(attr, DEFAULT_NODE_COLOR);
+        GraphConstants.setForeground(attr, Color.BLACK);
         Map cellAttr = new HashMap();
         cellAttr.put(cell, attr);
 
-        graphAdapter.edit(cellAttr, null, null, null);
+        graphAdapter.edit(cellAttr, null, null, null);        
     }
 
     /**
