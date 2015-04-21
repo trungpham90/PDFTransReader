@@ -66,6 +66,26 @@ public class PDFReaderWorkSpace {
             this.id = id;
         }
 
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public String getId() {
+            return id;
+        }
+
         @Override
         public String toString() {
             return "<html>" + content + "</html>";
@@ -86,9 +106,13 @@ public class PDFReaderWorkSpace {
             this.content = content;
         }
 
+        public String getId() {
+            return id;
+        }
+
         @Override
         public String toString() {
-            return "<html>" + content + "</html>";
+            return content;
         }
     }
 }

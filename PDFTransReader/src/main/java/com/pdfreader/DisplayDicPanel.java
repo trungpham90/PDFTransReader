@@ -5,6 +5,7 @@
 package com.pdfreader;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
+import com.pdfreader.data.PDFReaderWorkSpace.PDFSentenceNode;
 import com.pdfreader.dic.DicManager;
 import com.pdfreader.dic.DicVO;
 import com.pdfreader.dic.IDic;
@@ -78,6 +79,21 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     showDicDialog(word);
                     viewPanel.setHighLight(wordMap.get(word));
                 }
+            }
+
+            @Override
+            public void edgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
+                PDFReaderWorkSpace.PDFSentenceEdge edge = workspace.createSentenceEdge(source, target, "");
+                listPanel.addEdge(edge, source, target);
+            }
+
+            @Override
+            public void vertexCreated(String content, int x, int y , int p) {
+                if(p == -1){
+                    p = page;
+                }
+                PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, p);
+                listPanel.addVertex(node, x, y);
             }
         });
 
@@ -348,7 +364,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                     public void actionPerformed(ActionEvent e) {
                                         String content = PDFReaderUtil.getTextFromPDFList(selectedList);
                                         PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, page);
-                                        listPanel.addSentence(node);
+                                        listPanel.addVertex(node);
                                     }
                                 });
                                 popup.add(item);

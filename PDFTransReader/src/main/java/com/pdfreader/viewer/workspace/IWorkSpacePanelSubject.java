@@ -4,6 +4,8 @@
  */
 package com.pdfreader.viewer.workspace;
 
+import com.pdfreader.data.PDFReaderWorkSpace;
+
 /**
  *
  * @author Trung Pham
@@ -15,4 +17,8 @@ public interface IWorkSpacePanelSubject {
     public void removeListener(IWorkSpacePanelListener lis);
 
     public void notifyListener();
+    
+    public void notifyEdgeCreated(PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target);
+    
+    public void notifyVertexCreated(String content, int x, int y , int page);
 }

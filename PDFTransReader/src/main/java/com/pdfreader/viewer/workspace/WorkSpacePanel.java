@@ -5,6 +5,7 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
+import com.pdfreader.data.PDFReaderWorkSpace.PDFSentenceNode;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -13,20 +14,32 @@ import javax.swing.DefaultListModel;
  *
  * @author Trung Pham
  */
-public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePanelSubject {
-
+public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePanelSubject, ISummaryPanelListener {
+    
     private HashSet<IWorkSpacePanelListener> listeners = new HashSet();
     private DefaultListModel<String> model;
-
+    
     public WorkSpacePanel() {
-        initComponents();        
+        initComponents();
+        init();
     }
     
-    public void addSentence(PDFReaderWorkSpace.PDFSentenceNode sentence){
-        pDFSummaryPanel.addVertex(sentence);
+    private void init() {
+        pDFSummaryPanel.addListener(this);
     }
     
-
+    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
+        pDFSummaryPanel.addVertex(node);
+    }
+    
+    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y) {
+        pDFSummaryPanel.addVertex(node, x, y);
+    }
+    
+    public void addEdge(PDFReaderWorkSpace.PDFSentenceEdge edge, PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target) {
+        pDFSummaryPanel.addEdge(edge, source, target);
+    }
+    
     public void populateListContent(List<String> content) {
         model = new DefaultListModel();
         for (String word : content) {
@@ -35,19 +48,19 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
         wordList.setModel(model);
         wordList.revalidate();
     }
-
+    
     public void addWord(String word) {
         model.addElement(word);
         wordList.setModel(model);
         wordList.revalidate();
     }
-
+    
     public void removeWord(String word) {
         model.removeElement(word);
         wordList.setModel(model);
         wordList.revalidate();
     }
-
+    
     public String getSelectedWord() {
         if (wordList.getSelectedValue() == null) {
             return null;
@@ -119,16 +132,40 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     public void addListener(IWorkSpacePanelListener lis) {
         listeners.add(lis);
     }
-
+    
     @Override
     public void removeListener(IWorkSpacePanelListener lis) {
         listeners.remove(lis);
     }
-
+    
     @Override
     public void notifyListener() {
         for (IWorkSpacePanelListener list : listeners) {
             list.mouseClick();
         }
+    }
+    
+    @Override
+    public void edgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
+        notifyEdgeCreated(source, target);
+    }
+    
+    @Override
+    public void notifyEdgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
+        for (IWorkSpacePanelListener lis : listeners) {
+            lis.edgeCreated(source, target);
+        }
+    }
+    
+    @Override
+    public void notifyVertexCreated(String content, int x, int y , int page) {
+        for (IWorkSpacePanelListener lis : listeners) {
+            lis.vertexCreated(content, x, y , page);
+        }
+    }
+    
+    @Override
+    public void vertexCreated(String content, int x, int y , int page) {
+        notifyVertexCreated(content, x, y, page);
     }
 }
