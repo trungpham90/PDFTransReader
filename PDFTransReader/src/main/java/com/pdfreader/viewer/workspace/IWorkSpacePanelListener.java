@@ -16,4 +16,6 @@ public interface IWorkSpacePanelListener {
     public void edgeCreated(PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target);
     
     public void vertexCreated(String content, int x, int y , int page);
+    
+    public void vertexRemoved(String id);
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -53,6 +54,24 @@ public class PDFReaderWorkSpace {
         end.edgeMap.put(id.toString(), edge);
         return edge;
     }
+    
+    public PDFSentenceNode removeNode(String id){
+        PDFSentenceNode node = nodeList.remove(id);
+        for(String edge : node.edgeMap.keySet()){
+            removeEdge(edge);
+        }
+        return node;
+    }
+    
+    public PDFSentenceEdge removeEdge(String id){
+        for(PDFSentenceEdge edge : edgeList){
+            if(edge.id.equals(id)){
+                edgeList.remove(edge);
+                return edge;                
+            }
+        }
+        return null;
+    }
 
     public static class PDFSentenceNode {
 
@@ -89,6 +108,10 @@ public class PDFReaderWorkSpace {
         @Override
         public String toString() {
             return "<html>" + content + "</html>";
+        }
+        
+        public Map<String, PDFSentenceEdge> getEdgeMap(){
+            return new HashMap(edgeMap);
         }
     }
 

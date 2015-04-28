@@ -21,4 +21,6 @@ public interface IWorkSpacePanelSubject {
     public void notifyEdgeCreated(PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target);
     
     public void notifyVertexCreated(String content, int x, int y , int page);
+    
+    public void notifyVertexRemove(String id);
 }

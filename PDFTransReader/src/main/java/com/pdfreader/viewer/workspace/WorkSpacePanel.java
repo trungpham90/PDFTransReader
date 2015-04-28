@@ -18,13 +18,16 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     
     private HashSet<IWorkSpacePanelListener> listeners = new HashSet();
     private DefaultListModel<String> model;
+    private final int pageNum;
     
-    public WorkSpacePanel() {
+    public WorkSpacePanel(int pageNum) {
+        this.pageNum = pageNum;
         initComponents();
         init();
     }
     
     private void init() {
+        pDFSummaryPanel.setPageNum(pageNum);
         pDFSummaryPanel.addListener(this);
     }
     
@@ -167,5 +170,17 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     @Override
     public void vertexCreated(String content, int x, int y , int page) {
         notifyVertexCreated(content, x, y, page);
+    }
+
+    @Override
+    public void notifyVertexRemove(String id) {
+        for(IWorkSpacePanelListener lis : listeners){
+            lis.vertexRemoved(id);
+        }
+    }
+
+    @Override
+    public void vertexRemove(String id) {
+        notifyVertexRemove(id);
     }
 }

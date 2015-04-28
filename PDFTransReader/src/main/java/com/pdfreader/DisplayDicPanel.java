@@ -70,34 +70,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         languageComboBox.setModel(new DefaultComboBoxModel(DicManager.Language.values()));
         languageComboBox.setSelectedItem(DicManager.Language.English);
         languageComboBox.revalidate();
-        listPanel = new WorkSpacePanel();
-        listPanel.addListener(new IWorkSpacePanelListener() {
-            @Override
-            public void mouseClick() {
-                String word = listPanel.getSelectedWord();
-                if (word != null) {
-                    showDicDialog(word);
-                    viewPanel.setHighLight(wordMap.get(word));
-                }
-            }
 
-            @Override
-            public void edgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
-                PDFReaderWorkSpace.PDFSentenceEdge edge = workspace.createSentenceEdge(source, target, "");
-                listPanel.addEdge(edge, source, target);
-            }
-
-            @Override
-            public void vertexCreated(String content, int x, int y , int p) {
-                if(p == -1){
-                    p = page;
-                }
-                PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, p);
-                listPanel.addVertex(node, x, y);
-            }
-        });
-
-        rightPanel.add(listPanel, BorderLayout.CENTER);
         dic = DicManager.getDictionary(DicManager.Language.English);
         dicDialog.addListener(new IDicDialogListener() {
             @Override
@@ -319,6 +292,41 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 totalPage = reader.getNumPages();
                 totalPageLabel.setText("/ " + totalPage);
                 pageTextField.setText("1");
+                
+                listPanel = new WorkSpacePanel(totalPage);
+                listPanel.addListener(new IWorkSpacePanelListener() {
+                    @Override
+                    public void mouseClick() {
+                        String word = listPanel.getSelectedWord();
+                        if (word != null) {
+                            showDicDialog(word);
+                            viewPanel.setHighLight(wordMap.get(word));
+                        }
+                    }
+
+                    @Override
+                    public void edgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
+                        PDFReaderWorkSpace.PDFSentenceEdge edge = workspace.createSentenceEdge(source, target, "");
+                        listPanel.addEdge(edge, source, target);
+                    }
+
+                    @Override
+                    public void vertexCreated(String content, int x, int y, int p) {
+                        if (p == -1) {
+                            p = page;
+                        }
+                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, p);
+                        listPanel.addVertex(node, x, y);
+                    }
+
+                    @Override
+                    public void vertexRemoved(String id) {
+                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.removeNode(id);                        
+                    }
+                });
+
+                rightPanel.add(listPanel, BorderLayout.CENTER);
+                
                 viewPanel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
                     @Override
                     public void selectionTrigger(int x1, int y1, int x2, int y2) {
@@ -359,7 +367,6 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                 JPopupMenu popup = new JPopupMenu();
                                 JMenuItem item = new JMenuItem("Add selected text to summary");
                                 item.addActionListener(new ActionListener() {
-
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         String content = PDFReaderUtil.getTextFromPDFList(selectedList);
@@ -382,6 +389,8 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 leftPanel.revalidate();
                 leftPanel.repaint();
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                
             } catch (IOException ex) {
             }
 

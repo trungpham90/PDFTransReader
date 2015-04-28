@@ -16,4 +16,6 @@ public interface ISummaryPanelSubject {
     public void notifyEdgeCreated();
     
     public void notifyVertexCreated(String content, int x, int y, int page);
+    
+    public void notifyVertexRemove(String id);
 }

@@ -53,6 +53,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private static final int startX = 50, startY = 50;
     private static final Font DEFAULT_FONT = new Font("Serif", Font.PLAIN, 12);
     private HashSet<ISummaryPanelListener> listeners = new HashSet();
+    private int pageNum;
 
     /**
      * Creates new form PDFSummaryPanel
@@ -61,6 +62,10 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         super();
         initComponents();
         init();
+    }
+
+    public void setPageNum(int page) {
+        this.pageNum = page;
     }
 
     private void init() {
@@ -94,34 +99,54 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         graphGraphics.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent ex) {
-                DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());                 
-                if(SwingUtilities.isRightMouseButton(ex)){
-                      
-                     JPopupMenu menu = new JPopupMenu();
-                     JMenuItem item = new JMenuItem("Create new vertex");
-                     item.addActionListener(new ActionListener() {
+                DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());
+                if (SwingUtilities.isRightMouseButton(ex)) {
 
+                    JPopupMenu menu = new JPopupMenu();
+                    JMenuItem item = new JMenuItem("Create new vertex");
+                    item.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            
                             notifyVertexCreated("", ex.getX(), ex.getY(), -1);
-                            
-                            
                         }
                     });
-                     
-                     menu.add(item);
-                     menu.show(PDFSummaryPanel.this, ex.getX(), ex.getY());
-                     
-                }else if(ex.getClickCount() > 1){
-                    if(cell != null){
-                        Object o = cell.getUserObject();
-                        if(o instanceof PDFReaderWorkSpace.PDFSentenceNode){
-                            PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
-                            VertexChangeDialog dialog = new VertexChangeDialog(node);
-                            dialog.setLocationRelativeTo(PDFSummaryPanel.this);
-                            dialog.setVisible(true);
-                            graphGraphics.refresh();
+                    menu.add(item);
+                    if (cell != null) {
+                        final Object o = cell.getUserObject();
+                        if (o instanceof PDFReaderWorkSpace.PDFSentenceNode) {
+                            JMenuItem remove = new JMenuItem("Remove this node");
+                            remove.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
+                                    notifyVertexRemove(node.getId());
+                                    removeVertex(node);
+                                }
+                            });
+                            menu.add(remove);
+                        }
+                    }
+
+
+                    menu.show(PDFSummaryPanel.this, ex.getX(), ex.getY());
+
+                } else if (ex.getClickCount() > 1) {
+                    if (cell != null) {
+                        final Object o = cell.getUserObject();
+                        if (o instanceof PDFReaderWorkSpace.PDFSentenceNode) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
+                                    VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);
+                                    dialog.setLocationRelativeTo(PDFSummaryPanel.this);
+                                    dialog.setVisible(true);
+
+                                    graphGraphics.updateUI();
+                                    graphGraphics.refresh();
+
+                                }
+                            });
                         }
                     }
                 }
@@ -198,12 +223,12 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         }
         return false;
     }
-    
-    public void addEdge(PDFReaderWorkSpace.PDFSentenceEdge edge,PDFReaderWorkSpace.PDFSentenceNode source,PDFReaderWorkSpace.PDFSentenceNode target){
+
+    public void addEdge(PDFReaderWorkSpace.PDFSentenceEdge edge, PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target) {
         graph.addEdge(source, target, edge);
     }
 
-    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y){
+    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y) {
         graph.addVertex(node);
         positionVertexAt(node, DEFAULT_NODE_COLOR, x, y);
         SwingUtilities.invokeLater(new Runnable() {
@@ -212,6 +237,17 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                 graphGraphics.refresh();
             }
         });
+    }
+
+    public void removeVertex(PDFReaderWorkSpace.PDFSentenceNode node){
+        graph.removeVertex(node);
+        for(PDFReaderWorkSpace.PDFSentenceEdge edge : node.getEdgeMap().values()){
+            removeEdge(edge);
+        }
+    }
+    
+    public void removeEdge(PDFReaderWorkSpace.PDFSentenceEdge edge){
+        graph.removeEdge(edge);
     }
     
     
@@ -304,9 +340,16 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     }
 
     @Override
-    public void notifyVertexCreated(String content , int x, int y, int page) {
-        for(ISummaryPanelListener lis : listeners){
-            lis.vertexCreated(content, x, y , page);
+    public void notifyVertexCreated(String content, int x, int y, int page) {
+        for (ISummaryPanelListener lis : listeners) {
+            lis.vertexCreated(content, x, y, page);
+        }
+    }
+
+    @Override
+    public void notifyVertexRemove(String id) {
+        for (ISummaryPanelListener lis : listeners) {
+            lis.vertexRemove(id);
         }
     }
 }
