@@ -43,9 +43,9 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanelSubject {
 
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
-    private static final Color DEFAULT_NODE_COLOR = new Color(0x01A9DB);
-    private static final Color DEFAULT_SOURCE_NODE_COLOR = new Color(0xCD5C5C);
-    private static final Color DEFAULT_TARGET_NODE_COLOR = new Color(0xFFA500);
+    private static final Color DEFAULT_NODE_COLOR = new Color(0xFFFF00);
+    private static final Color DEFAULT_SOURCE_NODE_COLOR = new Color(0xADD8E6);
+    private static final Color DEFAULT_TARGET_NODE_COLOR = new Color(0x669900);
     private DefaultGraphCell source, target;
     private JGraphModelAdapter graphAdapter;
     private JGraph graphGraphics;
@@ -226,6 +226,15 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
 
     public void addEdge(PDFReaderWorkSpace.PDFSentenceEdge edge, PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target) {
         graph.addEdge(source, target, edge);
+        DefaultGraphCell cell = graphAdapter.getEdgeCell(edge);
+        Map attr = cell.getAttributes();
+        GraphConstants.setLineWidth(attr, 5);
+        GraphConstants.setLineStyle(attr, GraphConstants.STYLE_BEZIER);        
+        GraphConstants.setRouting(attr, GraphConstants.getROUTING_SIMPLE());
+        Map cellAttr = new HashMap();
+        cellAttr.put(cell, attr);
+
+        graphAdapter.edit(cellAttr, null, null, null);
     }
 
     public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y) {
@@ -239,18 +248,17 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         });
     }
 
-    public void removeVertex(PDFReaderWorkSpace.PDFSentenceNode node){
+    public void removeVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
         graph.removeVertex(node);
-        for(PDFReaderWorkSpace.PDFSentenceEdge edge : node.getEdgeMap().values()){
+        for (PDFReaderWorkSpace.PDFSentenceEdge edge : node.getEdgeMap().values()) {
             removeEdge(edge);
         }
     }
-    
-    public void removeEdge(PDFReaderWorkSpace.PDFSentenceEdge edge){
+
+    public void removeEdge(PDFReaderWorkSpace.PDFSentenceEdge edge) {
         graph.removeEdge(edge);
     }
-    
-    
+
     public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
         addVertex(node, startX, startY);
 
