@@ -99,7 +99,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         graphGraphics.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent ex) {
-                DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());
+                final DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());
                 if (SwingUtilities.isRightMouseButton(ex)) {
 
                     JPopupMenu menu = new JPopupMenu();
@@ -139,12 +139,28 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                                 public void run() {
                                     PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
                                     VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);
+                                    dialog.setModal(true);
                                     dialog.setLocationRelativeTo(PDFSummaryPanel.this);
                                     dialog.setVisible(true);
-
-                                    graphGraphics.updateUI();
+                                    graphGraphics.getSelectionModel().clearSelection();
                                     graphGraphics.refresh();
-
+                                }
+                            });
+                        } else if (o instanceof PDFReaderWorkSpace.PDFSentenceEdge) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PDFReaderWorkSpace.PDFSentenceEdge edge = (PDFReaderWorkSpace.PDFSentenceEdge) o;
+                                    EdgeChangeLabelDialog dialog = new EdgeChangeLabelDialog(edge);
+                                    dialog.setModal(true);
+                                    dialog.setLocationRelativeTo(PDFSummaryPanel.this);
+                                    dialog.setVisible(true);
+                                    Map attr = cell.getAttributes();
+                                    Map map = new HashMap();
+                                    map.put(cell, attr);
+                                    graphAdapter.edit(map, null, null, null);
+                                    graphGraphics.getSelectionModel().clearSelection();
+                                    graphGraphics.refresh();
                                 }
                             });
                         }
@@ -229,7 +245,8 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         DefaultGraphCell cell = graphAdapter.getEdgeCell(edge);
         Map attr = cell.getAttributes();
         GraphConstants.setLineWidth(attr, 5);
-        GraphConstants.setLineStyle(attr, GraphConstants.STYLE_BEZIER);        
+        GraphConstants.setEditable(attr, false);
+        GraphConstants.setLineStyle(attr, GraphConstants.STYLE_SPLINE);
         GraphConstants.setRouting(attr, GraphConstants.getROUTING_SIMPLE());
         Map cellAttr = new HashMap();
         cellAttr.put(cell, attr);
