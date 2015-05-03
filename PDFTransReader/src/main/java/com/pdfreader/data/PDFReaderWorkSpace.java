@@ -4,6 +4,7 @@
  */
 package com.pdfreader.data;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +48,11 @@ public class PDFReaderWorkSpace {
     }
 
     public PDFSentenceEdge createSentenceEdge(PDFSentenceNode start, PDFSentenceNode end, String content) {
+        if(start.isConnectTo(end.getId())){
+            return null;
+        }
         UUID id = UUID.randomUUID();
+        
         PDFSentenceEdge edge = new PDFSentenceEdge(id.toString(), start.id, end.id, content);
         edgeList.add(edge);
         start.edgeMap.put(id.toString(), edge);
@@ -77,12 +82,14 @@ public class PDFReaderWorkSpace {
 
         private String content;
         private String id;
+        private Color color;
         private int page;
         private HashMap<String, PDFSentenceEdge> edgeMap = new HashMap();
 
         private PDFSentenceNode(String content, String id, int page) {
             this.content = content;
             this.id = id;
+            this.color = null;
         }
 
         public String getContent() {
@@ -103,6 +110,30 @@ public class PDFReaderWorkSpace {
 
         public String getId() {
             return id;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public void setColor(Color color) {
+            this.color = color;
+        }
+        
+        public boolean isConnectTo(String vertexID){
+            if(vertexID == null){
+                throw new NullPointerException("Vertex ID is null!");
+            }
+            if(id.equals(vertexID)){
+                return true;
+            }
+            for(String edge : edgeMap.keySet()){
+                PDFSentenceEdge e = edgeMap.get(edge);
+                if(e.endID.equals(vertexID)){
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override

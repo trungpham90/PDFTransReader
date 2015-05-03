@@ -23,4 +23,6 @@ public interface IWorkSpacePanelSubject {
     public void notifyVertexCreated(String content, int x, int y , int page);
     
     public void notifyVertexRemove(String id);
+    
+    public void notifyEdgeReomve(String id);
 }

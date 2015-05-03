@@ -292,7 +292,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 totalPage = reader.getNumPages();
                 totalPageLabel.setText("/ " + totalPage);
                 pageTextField.setText("1");
-                
+
                 listPanel = new WorkSpacePanel(totalPage);
                 listPanel.addListener(new IWorkSpacePanelListener() {
                     @Override
@@ -307,6 +307,9 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     @Override
                     public void edgeCreated(PDFSentenceNode source, PDFSentenceNode target) {
                         PDFReaderWorkSpace.PDFSentenceEdge edge = workspace.createSentenceEdge(source, target, "");
+                        if (edge == null) {
+                            return;
+                        }
                         listPanel.addEdge(edge, source, target);
                     }
 
@@ -321,12 +324,17 @@ public class DisplayDicPanel extends javax.swing.JPanel {
 
                     @Override
                     public void vertexRemoved(String id) {
-                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.removeNode(id);                        
+                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.removeNode(id);
+                    }
+
+                    @Override
+                    public void edgeRemoved(String id) {
+                        workspace.removeEdge(id);
                     }
                 });
 
                 rightPanel.add(listPanel, BorderLayout.CENTER);
-                
+
                 viewPanel.addListener(new PDFViewerPanel.ViewerSelectionListener() {
                     @Override
                     public void selectionTrigger(int x1, int y1, int x2, int y2) {
@@ -390,7 +398,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 leftPanel.repaint();
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
-                
+
             } catch (IOException ex) {
             }
 

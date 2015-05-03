@@ -16,4 +16,6 @@ public interface ISummaryPanelListener {
     public void vertexCreated(String content , int x, int y, int page);
     
     public void vertexRemove(String id);
+    
+    public void edgeRemove(String id);
 }

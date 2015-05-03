@@ -183,4 +183,16 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     public void vertexRemove(String id) {
         notifyVertexRemove(id);
     }
+
+    @Override
+    public void edgeRemove(String id) {
+        notifyVertexRemove(id);
+    }
+
+    @Override
+    public void notifyEdgeReomve(String id) {
+       for(IWorkSpacePanelListener lis : listeners){
+            lis.edgeRemoved(id);
+        }
+    }
 }
