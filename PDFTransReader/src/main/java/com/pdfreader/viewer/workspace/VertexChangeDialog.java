@@ -5,8 +5,11 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -32,8 +35,9 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     }
 
     private void init() {
-        contentTextArea.setText(node.getContent());
         
+        contentEditorPane.setContentType("text/html");
+        contentEditorPane.setText(node.getContent());
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
         for (int i = 0; i < pageNum; i++) {
             model.addElement(("" + (i + 1)).intern());
@@ -57,9 +61,12 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        contentTextArea = new javax.swing.JTextArea();
         pageNumComboBox = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        contentEditorPane = new javax.swing.JEditorPane();
+        boldButton = new javax.swing.JButton();
+        italicButton = new javax.swing.JButton();
+        underlineButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -86,11 +93,23 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setText("Edit");
 
-        contentTextArea.setColumns(20);
-        contentTextArea.setRows(5);
-        jScrollPane1.setViewportView(contentTextArea);
-
         pageNumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jScrollPane2.setViewportView(contentEditorPane);
+
+        boldButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        boldButton.setText("B");
+        boldButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boldButtonActionPerformed(evt);
+            }
+        });
+
+        italicButton.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        italicButton.setText("I");
+
+        underlineButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        underlineButton.setText("U");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -105,16 +124,23 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
-                            .addComponent(pageNumComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(boldButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(italicButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(underlineButton)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(pageNumComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -124,19 +150,21 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(okButton)
-                            .addComponent(jButton2)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(pageNumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(0, 29, Short.MAX_VALUE)))
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(boldButton)
+                    .addComponent(italicButton)
+                    .addComponent(underlineButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pageNumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(okButton)
+                    .addComponent(jButton2))
                 .addGap(20, 20, 20))
         );
 
@@ -150,7 +178,7 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -167,9 +195,23 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             return;
         }
-        node.setContent(contentTextArea.getText());
+        node.setContent(contentEditorPane.getText());
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
+
+    private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
+        try {
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<b>", null);
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</b>", null);
+            contentEditorPane.setContentType("text/html");
+            contentEditorPane.setText(contentEditorPane.getText());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+    }//GEN-LAST:event_boldButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,6 +242,7 @@ public class VertexChangeDialog extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 VertexChangeDialog dialog = new VertexChangeDialog(null, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -213,14 +256,17 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea contentTextArea;
+    private javax.swing.JButton boldButton;
+    private javax.swing.JEditorPane contentEditorPane;
+    private javax.swing.JButton italicButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox pageNumComboBox;
+    private javax.swing.JButton underlineButton;
     // End of variables declaration//GEN-END:variables
 }
