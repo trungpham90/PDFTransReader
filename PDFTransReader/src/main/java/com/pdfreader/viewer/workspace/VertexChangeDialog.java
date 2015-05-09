@@ -35,8 +35,8 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     }
 
     private void init() {
-        
-        contentEditorPane.setContentType("text/html");
+
+        //   contentEditorPane.setContentType("text/html");
         contentEditorPane.setText(node.getContent());
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
         for (int i = 0; i < pageNum; i++) {
@@ -107,9 +107,19 @@ public class VertexChangeDialog extends javax.swing.JDialog {
 
         italicButton.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         italicButton.setText("I");
+        italicButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                italicButtonActionPerformed(evt);
+            }
+        });
 
         underlineButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         underlineButton.setText("U");
+        underlineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                underlineButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -203,15 +213,39 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         try {
             contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<b>", null);
             contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</b>", null);
-            contentEditorPane.setContentType("text/html");
             contentEditorPane.setText(contentEditorPane.getText());
+            System.out.println(contentEditorPane.getText());
         } catch (BadLocationException ex) {
             Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
+
+
+
     }//GEN-LAST:event_boldButtonActionPerformed
+
+    private void italicButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicButtonActionPerformed
+        try {
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<i>", null);
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</i>", null);
+            contentEditorPane.setText(contentEditorPane.getText());
+            System.out.println(contentEditorPane.getText());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_italicButtonActionPerformed
+
+    private void underlineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underlineButtonActionPerformed
+        try {
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<u>", null);
+            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</u>", null);
+            contentEditorPane.setText(contentEditorPane.getText());
+            System.out.println(contentEditorPane.getText());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_underlineButtonActionPerformed
 
     /**
      * @param args the command line arguments

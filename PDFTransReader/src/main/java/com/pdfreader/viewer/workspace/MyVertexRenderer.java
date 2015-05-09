@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellView;
 import org.jgraph.graph.CellViewRenderer;
+import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.VertexRenderer;
 import org.jgraph.graph.VertexView;
@@ -28,11 +29,19 @@ public class MyVertexRenderer extends VertexRenderer {
         if (view instanceof VertexView) {
             this.view = (VertexView) view;
             setComponentOrientation(graph.getComponentOrientation());
+            System.out.println(view.getCell().getClass());
             if (graph.getEditingCell() != view.getCell()) {
-                
-                Object label = graph.convertValueToString(view);
+                Object label = null;
+                if (view.getCell() instanceof DefaultGraphCell) {
+                    DefaultGraphCell tmp = (DefaultGraphCell) view.getCell();
+                    label = tmp.getUserObject();
+                }
+                System.out.println(label);
+                if (label == null) {
+                    label = graph.convertValueToString(view);
+                }
                 if (label != null) {
-                    System.out.println(label.toString() + " " + view.getClass());
+
                     setText(label.toString());
                 } else {
                     setText(null);

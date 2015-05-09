@@ -137,7 +137,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
             @Override
             public void mouseClicked(final MouseEvent ex) {
                 final DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());
-                VertexView.renderer = new MyVertexRenderer();
+             //   VertexView.renderer = new MyVertexRenderer();
                 if (SwingUtilities.isRightMouseButton(ex)) {
 
                     JPopupMenu menu = new JPopupMenu();
@@ -292,7 +292,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         graphGraphics.setBendable(true);
         graphGraphics.setConnectable(true);
         graphGraphics.revalidate();
-        revalidate();
+        
 
         // that's all there is to it!...
     }
