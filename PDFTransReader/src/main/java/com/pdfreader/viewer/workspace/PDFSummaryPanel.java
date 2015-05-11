@@ -202,12 +202,12 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                                 @Override
                                 public void run() {
                                     PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
-                                    VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);
-                                    dialog.setSize(500, 300);
+                                    VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);                                    
+                                    dialog.pack();
                                     dialog.setModal(true);
                                     dialog.setLocationRelativeTo(PDFSummaryPanel.this);
                                     dialog.setVisible(true);
-
+                                    
                                     
                                     
                                     graphGraphics.getSelectionModel().clearSelection();

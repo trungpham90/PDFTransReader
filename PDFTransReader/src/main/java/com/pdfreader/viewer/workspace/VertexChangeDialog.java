@@ -5,11 +5,20 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
+import java.awt.Color;
+import java.text.AttributedCharacterIterator;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -20,6 +29,27 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     /**
      * Creates new form VertexChangeDialog
      */
+    private static enum HTMLTag {
+
+        BOLD("<b>", "</b>"),
+        ITALIC("<i>", "</i>"),
+        UNDERLINE("<u>", "</u>");
+        private String start, end;
+
+        HTMLTag(String start, String end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public static HTMLTag getTag(String text) {
+            for (HTMLTag tag : values()) {
+                if (tag.start.equals(text) || tag.end.equals(text)) {
+                    return tag;
+                }
+            }
+            return null;
+        }
+    }
     private PDFReaderWorkSpace.PDFSentenceNode node;
     private int pageNum;
 
@@ -35,9 +65,11 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     }
 
     private void init() {
-
-        //   contentEditorPane.setContentType("text/html");
-        contentEditorPane.setText(node.getContent());
+        try {
+            convertHtmlToTextStyle(node.getContent());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
         for (int i = 0; i < pageNum; i++) {
             model.addElement(("" + (i + 1)).intern());
@@ -62,11 +94,11 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         pageNumComboBox = new javax.swing.JComboBox();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        contentEditorPane = new javax.swing.JEditorPane();
         boldButton = new javax.swing.JButton();
         italicButton = new javax.swing.JButton();
         underlineButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        contentTextPane = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -95,8 +127,6 @@ public class VertexChangeDialog extends javax.swing.JDialog {
 
         pageNumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jScrollPane2.setViewportView(contentEditorPane);
-
         boldButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         boldButton.setText("B");
         boldButton.addActionListener(new java.awt.event.ActionListener() {
@@ -121,6 +151,8 @@ public class VertexChangeDialog extends javax.swing.JDialog {
             }
         });
 
+        jScrollPane1.setViewportView(contentTextPane);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -142,15 +174,15 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pageNumComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(boldButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(italicButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(underlineButton)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(pageNumComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2))))
+                                .addGap(0, 590, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -161,8 +193,8 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boldButton)
                     .addComponent(italicButton)
@@ -205,47 +237,197 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             return;
         }
-        node.setContent(contentEditorPane.getText());
+        try {
+            node.setContent(getTextStyleToHTML());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
-        try {
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<b>", null);
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</b>", null);
-            contentEditorPane.setText(contentEditorPane.getText());
-            System.out.println(contentEditorPane.getText());
-        } catch (BadLocationException ex) {
-            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));    
+        boolean notBold = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isBold(e.getAttributes())) {
+                notBold = true;
+                break;
+            }
         }
+        if (notBold) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
 
-
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setBold(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setBold(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        }
 
     }//GEN-LAST:event_boldButtonActionPerformed
 
     private void italicButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicButtonActionPerformed
-        try {
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<i>", null);
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</i>", null);
-            contentEditorPane.setText(contentEditorPane.getText());
-            System.out.println(contentEditorPane.getText());
-        } catch (BadLocationException ex) {
-            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));    
+        boolean notItalic = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isBold(e.getAttributes())) {
+                notItalic = true;
+                break;
+            }
+        }
+        if (notItalic) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setItalic(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setItalic(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
         }
 
     }//GEN-LAST:event_italicButtonActionPerformed
 
     private void underlineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underlineButtonActionPerformed
-        try {
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionStart(), "<u>", null);
-            contentEditorPane.getDocument().insertString(contentEditorPane.getSelectionEnd(), "</u>", null);
-            contentEditorPane.setText(contentEditorPane.getText());
-            System.out.println(contentEditorPane.getText());
-        } catch (BadLocationException ex) {
-            Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));    
+        boolean notUnderline = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isBold(e.getAttributes())) {
+                notUnderline = true;
+                break;
+            }
         }
+        if (notUnderline) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
 
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setUnderline(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setUnderline(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        }
     }//GEN-LAST:event_underlineButtonActionPerformed
+    private String wrapHtmlTag(String text) {
+        return "<html>" + text + "</html>";
+    }
+
+    private void convertHtmlToTextStyle(String text) throws BadLocationException {
+
+        Stack<String> stack = new Stack();
+        Stack<Integer> pos = new Stack();
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '<') {
+                boolean neg = false;
+                if (i + 1 < text.length() && text.charAt(i + 1) == '/') {
+                    neg = true;
+                }
+                String cur = "";
+                while (text.charAt(i) != '>') {
+                    cur += text.charAt(i);
+                    i++;
+                }
+                cur += text.charAt(i);
+                if (!neg) {
+                    stack.add(cur);
+                    pos.add(contentTextPane.getStyledDocument().getLength());
+                } else {
+                    String tag = stack.pop();
+                    HTMLTag t = HTMLTag.getTag(tag);
+                    int start = pos.pop();
+                    if (t != null) {
+
+                        SimpleAttributeSet att = new SimpleAttributeSet();
+                        switch (t) {
+                            case BOLD:
+                                StyleConstants.setBold(att, true);
+                                break;
+                            case ITALIC:
+                                StyleConstants.setItalic(att, true);
+                                break;
+                            case UNDERLINE:
+                                StyleConstants.setUnderline(att, true);
+                                break;
+                        }
+                        doc.setCharacterAttributes(start, doc.getLength() - start, att, true);
+
+                    }
+                }
+            } else {
+                doc.insertString(doc.getLength(), "" + text.charAt(i), null);
+            }
+        }
+    }
+
+    private String getTextStyleToHTML() throws BadLocationException {
+        StringBuilder builder = new StringBuilder();
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = 0; i < doc.getLength(); i++) {
+            Element element = doc.getCharacterElement(i);
+            StringBuilder tmp = new StringBuilder();
+            AttributeSet set = element.getAttributes();
+            builder.append(getTextStyleToHTML(doc.getText(i, 1), set));
+        }
+        System.out.println("HTML " + builder.toString());
+        return builder.toString();
+    }
+
+    private String getTextStyleToHTML(String text, AttributeSet set) {
+        StringBuilder prefix = new StringBuilder();
+        Stack<String> stack = new Stack();
+        if (StyleConstants.isBold(set)) {
+            prefix.append(HTMLTag.BOLD.start);
+
+            stack.push(HTMLTag.BOLD.end);
+        }
+        if (StyleConstants.isItalic(set)) {
+            prefix.append(HTMLTag.ITALIC.start);
+
+            stack.push(HTMLTag.ITALIC.end);
+        }
+        if (StyleConstants.isUnderline(set)) {
+            prefix.append(HTMLTag.UNDERLINE.start);
+
+            stack.push(HTMLTag.UNDERLINE.end);
+        }
+        prefix.append(text);
+        while (!stack.isEmpty()) {
+            prefix.append(stack.pop());
+        }
+        return prefix.toString();
+    }
 
     /**
      * @param args the command line arguments
@@ -291,14 +473,14 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boldButton;
-    private javax.swing.JEditorPane contentEditorPane;
+    private javax.swing.JTextPane contentTextPane;
     private javax.swing.JButton italicButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox pageNumComboBox;
     private javax.swing.JButton underlineButton;
