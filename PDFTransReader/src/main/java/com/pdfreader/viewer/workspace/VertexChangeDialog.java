@@ -6,6 +6,8 @@ package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.text.AttributedCharacterIterator;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -16,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -26,14 +29,14 @@ import javax.swing.text.StyledDocument;
  */
 public class VertexChangeDialog extends javax.swing.JDialog {
 
-    /**
-     * Creates new form VertexChangeDialog
-     */
+    private static final int[] fontSize = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96};
+
     private static enum HTMLTag {
 
         BOLD("<b>", "</b>"),
         ITALIC("<i>", "</i>"),
-        UNDERLINE("<u>", "</u>");
+        UNDERLINE("<u>", "</u>"),
+        FONT("<font>", "</font>");
         private String start, end;
 
         HTMLTag(String start, String end) {
@@ -65,6 +68,19 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     }
 
     private void init() {
+        GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Font[] fonts = e.getAllFonts(); // Get the fonts
+        DefaultComboBoxModel<String> fontModel = new DefaultComboBoxModel();
+        for (Font f : fonts) {
+            fontModel.addElement(f.getFontName());
+        }
+        fontComboBox.setModel(fontModel);
+        DefaultComboBoxModel<Integer> sizeModel = new DefaultComboBoxModel();
+        for (int i : fontSize) {
+            sizeModel.addElement(i);
+        }
+        sizeComboBox.setModel(sizeModel);
+
         try {
             convertHtmlToTextStyle(node.getContent());
         } catch (BadLocationException ex) {
@@ -99,6 +115,8 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         underlineButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         contentTextPane = new javax.swing.JTextPane();
+        fontComboBox = new javax.swing.JComboBox();
+        sizeComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -153,6 +171,20 @@ public class VertexChangeDialog extends javax.swing.JDialog {
 
         jScrollPane1.setViewportView(contentTextPane);
 
+        fontComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        fontComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fontComboBoxActionPerformed(evt);
+            }
+        });
+
+        sizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        sizeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sizeComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -181,7 +213,11 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                                 .addComponent(italicButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(underlineButton)
-                                .addGap(0, 590, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fontComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(sizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 466, Short.MAX_VALUE))
                             .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
@@ -198,7 +234,9 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boldButton)
                     .addComponent(italicButton)
-                    .addComponent(underlineButton))
+                    .addComponent(underlineButton)
+                    .addComponent(fontComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pageNumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -339,6 +377,36 @@ public class VertexChangeDialog extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_underlineButtonActionPerformed
+
+    private void fontComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontComboBoxActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        String font = fontComboBox.getSelectedItem().toString();
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+            StyleConstants.setFontFamily(att, font);
+            doc.setCharacterAttributes(i, 1, att, true);
+        }
+
+    }//GEN-LAST:event_fontComboBoxActionPerformed
+
+    private void sizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeComboBoxActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        int size = Integer.parseInt(sizeComboBox.getSelectedItem().toString());
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+            StyleConstants.setFontSize(att, size);
+            doc.setCharacterAttributes(i, 1, att, true);
+        }
+
+
+
+    }//GEN-LAST:event_sizeComboBoxActionPerformed
     private String wrapHtmlTag(String text) {
         return "<html>" + text + "</html>";
     }
@@ -365,7 +433,9 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                     pos.add(contentTextPane.getStyledDocument().getLength());
                 } else {
                     String tag = stack.pop();
-                    HTMLTag t = HTMLTag.getTag(tag);
+
+                    //Check tag by using closing tag is more easy.
+                    HTMLTag t = HTMLTag.getTag(cur);
                     int start = pos.pop();
                     if (t != null) {
 
@@ -380,6 +450,9 @@ public class VertexChangeDialog extends javax.swing.JDialog {
                             case UNDERLINE:
                                 StyleConstants.setUnderline(att, true);
                                 break;
+                            case FONT:
+                                setFont(cur, att);
+                                break;
                         }
                         doc.setCharacterAttributes(start, doc.getLength() - start, att, true);
 
@@ -391,6 +464,9 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         }
     }
 
+    private void setFont(String tag, MutableAttributeSet att) {
+    }
+
     private String getTextStyleToHTML() throws BadLocationException {
         StringBuilder builder = new StringBuilder();
         StyledDocument doc = contentTextPane.getStyledDocument();
@@ -400,7 +476,6 @@ public class VertexChangeDialog extends javax.swing.JDialog {
             AttributeSet set = element.getAttributes();
             builder.append(getTextStyleToHTML(doc.getText(i, 1), set));
         }
-        System.out.println("HTML " + builder.toString());
         return builder.toString();
     }
 
@@ -409,24 +484,44 @@ public class VertexChangeDialog extends javax.swing.JDialog {
         Stack<String> stack = new Stack();
         if (StyleConstants.isBold(set)) {
             prefix.append(HTMLTag.BOLD.start);
-
             stack.push(HTMLTag.BOLD.end);
         }
         if (StyleConstants.isItalic(set)) {
             prefix.append(HTMLTag.ITALIC.start);
-
             stack.push(HTMLTag.ITALIC.end);
         }
         if (StyleConstants.isUnderline(set)) {
             prefix.append(HTMLTag.UNDERLINE.start);
-
             stack.push(HTMLTag.UNDERLINE.end);
         }
+
+        prefix.append(getOpenFontTag(set));
+        stack.push(HTMLTag.FONT.end);
+
+
+
         prefix.append(text);
         while (!stack.isEmpty()) {
             prefix.append(stack.pop());
         }
         return prefix.toString();
+    }
+
+    private String getOpenFontTag(AttributeSet set) {
+        String font = StyleConstants.getFontFamily(set);
+        int size = StyleConstants.getFontSize(set) * 3 / 11;
+        String color = null;
+        String result = "<font";
+        if (font != null) {
+            result += " face=\"" + font + "\"";
+        }
+        if (color != null) {
+            result += " color=\"" + color + "\"";
+        }
+        result += " size=" + size;
+        result += ">";
+        System.out.println("RESULT " + result);
+        return result;
     }
 
     /**
@@ -474,6 +569,7 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boldButton;
     private javax.swing.JTextPane contentTextPane;
+    private javax.swing.JComboBox fontComboBox;
     private javax.swing.JButton italicButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -483,6 +579,7 @@ public class VertexChangeDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox pageNumComboBox;
+    private javax.swing.JComboBox sizeComboBox;
     private javax.swing.JButton underlineButton;
     // End of variables declaration//GEN-END:variables
 }
