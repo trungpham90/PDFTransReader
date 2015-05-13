@@ -76,7 +76,9 @@
                                   <Component id="fontComboBox" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="sizeComboBox" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="466" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="colorButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="421" max="32767" attributes="0"/>
                               </Group>
                               <Component id="jScrollPane1" max="32767" attributes="0"/>
                           </Group>
@@ -103,6 +105,7 @@
                       <Component id="underlineButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="fontComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="sizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="colorButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -238,6 +241,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sizeComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="colorButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="A"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
