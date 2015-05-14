@@ -9,6 +9,7 @@ import com.pdfreader.viewer.workspace.ColorSectionPanel.HTMLColor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -481,7 +482,6 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
                     pos.add(contentTextPane.getStyledDocument().getLength());
                 } else {
                     String tag = stack.pop();
-
                     //Check tag by using closing tag is more easy.
                     HTMLTag t = HTMLTag.getTag(cur);
                     int start = pos.pop();
@@ -499,7 +499,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
                                 StyleConstants.setUnderline(att, true);
                                 break;
                             case FONT:
-                                setFont(cur, att);
+                                setFont(tag, att);
                                 break;
                         }
                         doc.setCharacterAttributes(start, doc.getLength() - start, att, true);
@@ -514,23 +514,33 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
 
     private void setFont(String tag, MutableAttributeSet att) {
 
-        String[] tmp = tag.split(" ");
+        String[] tmp = tag.substring(1, tag.length() - 1).split(" ");
+        System.out.println(Arrays.toString(tmp));
         for (String value : tmp) {
             if (value.startsWith("face")) {
                 String font = value.split("=")[1];
                 font = font.substring(1, font.length() - 1);
                 System.out.println(font);
-                StyleConstants.setFontFamily(att, font);                
-            }else if(value.startsWith("color")){
+                StyleConstants.setFontFamily(att, font);
+            } else if (value.startsWith("color")) {
                 String color = value.split("=")[1];
                 color = color.substring(1, color.length() - 1);
-                System.out.println(color);
-                HTMLColor c = HTMLColor.getColor(color);
+                int colorValue = Integer.parseInt(color, 16);
+                HTMLColor c = HTMLColor.getColor(colorValue);
                 StyleConstants.setForeground(att, new Color(c.getNumber()));
-            }else if(value.startsWith("size")){
+            } else if (value.startsWith("size")) {
                 String size = value.split("=")[1];
-                int s = Integer.parseInt(size);
-                StyleConstants.setFontSize(att, s*11/3);
+
+                double s = Double.parseDouble(size);
+                //System.out.println(s*11/3);
+                StyleConstants.setFontSize(att, (int) (s * 11 / 3));
+            } else if(value.startsWith("style")){
+                String s = value.split("=")[1];
+                s = s.substring(1, s.length() - 1);
+                String color = s.split(":")[1];
+                int colorValue = Integer.parseInt(color, 16);
+                HTMLColor c = HTMLColor.getColor(colorValue);
+                StyleConstants.setBackground(att, new Color(c.getNumber()));
             }
         }
 
@@ -567,8 +577,6 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         prefix.append(getOpenFontTag(set));
         stack.push(HTMLTag.FONT.end);
 
-
-
         prefix.append(text);
         while (!stack.isEmpty()) {
             prefix.append(stack.pop());
@@ -578,15 +586,21 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
 
     private String getOpenFontTag(AttributeSet set) {
         String font = StyleConstants.getFontFamily(set);
-        int size = StyleConstants.getFontSize(set) * 3 / 11;
+        double size = StyleConstants.getFontSize(set) * 3f / 11;
         Color c = StyleConstants.getForeground(set);
-        String color = ColorSectionPanel.HTMLColor.getColor(c.getRGB() ^ 0xff000000).getName();
+        ColorSectionPanel.HTMLColor color = ColorSectionPanel.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
         String result = "<font";
         if (font != null) {
             result += " face=\"" + font + "\"";
         }
         if (color != null) {
-            result += " color=\"" + color + "\"";
+            result += " color=\"" + Integer.toHexString(color.getNumber()) + "\"";
+        }
+        Color back = (Color) set.getAttribute(StyleConstants.Background);
+
+        if (back != null) {
+            ColorSectionPanel.HTMLColor backColor = ColorSectionPanel.HTMLColor.getColor(back.getRGB() ^ 0xff000000);
+            result += " style=\"BACKGROUND-COLOR:" + Integer.toHexString(backColor.getNumber()) + "\"";
         }
         result += " size=" + size;
         result += ">";

@@ -7,6 +7,7 @@ package com.pdfreader.viewer.workspace;
 import com.pdfreader.util.ColorIcon;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,7 @@ public class ColorSectionPanel extends javax.swing.JPanel {
     }
 
     private void init() {
+        colorPanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
         textRadioButton.setSelected(true);
         JPanel buttonPanel = new JPanel(new GridLayout(0, 3));
         JButton[] buttons = new JButton[HTMLColor.values().length];
@@ -158,7 +160,7 @@ public class ColorSectionPanel extends javax.swing.JPanel {
             }
         });
 
-        colorPanel.setBackground(new java.awt.Color(255, 255, 255));
+        colorPanel.setBackground(new java.awt.Color(204, 204, 204));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
