@@ -5,10 +5,14 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.util.ColorIcon;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -35,16 +39,24 @@ public class ColorSectionPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        colorPanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
+        colorPanel.setLayout(new BorderLayout(0, 0));
         textRadioButton.setSelected(true);
-        JPanel buttonPanel = new JPanel(new GridLayout(0, 3));
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setBackground(Color.WHITE);       
+        
+        GridBagConstraints c = new GridBagConstraints();
+        
+        
+        int x = 0;
+        int y = 0;
+        
         JButton[] buttons = new JButton[HTMLColor.values().length];
         int index = 0;
         for (final HTMLColor color : HTMLColor.values()) {
             buttons[index] = new JButton();
             ColorIcon icon = new ColorIcon(30, 30, new Color(color.number));
-            buttons[index].setIcon(icon);
-            buttons[index].setPreferredSize(new Dimension(35, 35));
+            buttons[index].setIcon(icon);           
+            buttons[index].setMargin(new Insets(0, 0, 0, 0));
             buttons[index].setContentAreaFilled(false);
             buttons[index].addActionListener(new ActionListener() {
                 @Override
@@ -54,10 +66,17 @@ public class ColorSectionPanel extends javax.swing.JPanel {
                 }
             });
 
-            buttonPanel.add(buttons[index]);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = x++;
+            c.gridy = y;
+            if( x == 3){
+                x = 0;                
+                y++;               
+            }
+            buttonPanel.add(buttons[index], c);
             index++;
         }
-        colorPanel.add(buttonPanel);
+        colorPanel.add(buttonPanel , BorderLayout.CENTER);
     }
 
     public void addListener(ColorSelectionListener lis) {
@@ -160,18 +179,17 @@ public class ColorSectionPanel extends javax.swing.JPanel {
             }
         });
 
-        colorPanel.setBackground(new java.awt.Color(204, 204, 204));
+        colorPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(textRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(highlightRadioButton)
-                .addGap(40, 40, 40))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(highlightRadioButton))
             .addComponent(colorPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -182,7 +200,7 @@ public class ColorSectionPanel extends javax.swing.JPanel {
                     .addComponent(textRadioButton)
                     .addComponent(highlightRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(colorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+                .addComponent(colorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

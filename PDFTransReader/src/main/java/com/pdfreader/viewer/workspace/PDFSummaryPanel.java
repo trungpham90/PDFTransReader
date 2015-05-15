@@ -21,10 +21,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import org.jgraph.JGraph;
 import org.jgraph.event.GraphModelEvent;
 import org.jgraph.event.GraphModelListener;
@@ -90,6 +92,8 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private static final Font DEFAULT_FONT = new Font("Serif", Font.PLAIN, 12);
     private HashSet<ISummaryPanelListener> listeners = new HashSet();
     private int pageNum;
+    private int lastX = 0, lastY = 0;
+    private Timer timer;
 
     /**
      * Creates new form PDFSummaryPanel
@@ -105,10 +109,28 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     }
 
     private void init() {
+
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer.stop();
+                DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(lastX, lastY);
+                if (cell == null || !(cell.getUserObject() instanceof PDFReaderWorkSpace.PDFSentenceNode)) {
+                    return;
+                }
+                PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) cell.getUserObject();
+                JPopupMenu menu = new JPopupMenu();
+                JLabel label = new JLabel(node.toString());
+                menu.add(label);
+                menu.setPopupSize(getEstimatedLength(node.toString()), getEstimatedHeight(node.toString()));
+                menu.show(PDFSummaryPanel.this, lastX, lastY);
+
+            }
+        });
         // create a JGraphT graph
         graph = new ListenableDirectedGraph(DefaultEdge.class);
         // create a visualization using JGraph, via an adapter      
-        
+
         graphAdapter = new JGraphModelAdapter(graph);
         graphAdapter.addGraphModelListener(new GraphModelListener() {
             @Override
@@ -116,7 +138,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
             }
         });
         GraphLayoutCache cache = new GraphLayoutCache(graphAdapter, new DefaultCellViewFactory());
-        graphGraphics = new JGraph(graphAdapter , cache);
+        graphGraphics = new JGraph(graphAdapter, cache);
 
         // jgraph.setPreferredSize(DEFAULT_SIZE);
         graphGraphics.setBackground(Color.WHITE);
@@ -137,9 +159,9 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
             @Override
             public void mouseClicked(final MouseEvent ex) {
                 final DefaultGraphCell cell = (DefaultGraphCell) graphGraphics.getFirstCellForLocation(ex.getX(), ex.getY());
-             //   VertexView.renderer = new MyVertexRenderer();
+                //   VertexView.renderer = new MyVertexRenderer();
                 if (SwingUtilities.isRightMouseButton(ex)) {
-
+                    timer.stop();
                     JPopupMenu menu = new JPopupMenu();
                     JMenuItem item = new JMenuItem("Create new vertex");
                     item.addActionListener(new ActionListener() {
@@ -149,6 +171,15 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                         }
                     });
                     menu.add(item);
+                    JMenuItem collapse = new JMenuItem("Collapse all nodes");
+                    collapse.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            collapse();
+                        }
+                    });
+                    menu.add(collapse);
+
                     if (cell != null) {
                         final Object o = cell.getUserObject();
                         if (o instanceof PDFReaderWorkSpace.PDFSentenceNode) {
@@ -196,22 +227,23 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
 
                 } else if (ex.getClickCount() > 1) {
                     if (cell != null) {
+                        timer.stop();
                         final Object o = cell.getUserObject();
                         if (o instanceof PDFReaderWorkSpace.PDFSentenceNode) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
-                                    VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);                                    
+                                    VertexChangeDialog dialog = new VertexChangeDialog(node, pageNum);
                                     dialog.pack();
                                     dialog.setModal(true);
                                     dialog.setLocationRelativeTo(PDFSummaryPanel.this);
                                     dialog.setVisible(true);
-                                    
-                                    
-                                    
+
+
+
                                     graphGraphics.getSelectionModel().clearSelection();
-                                    
+
                                     graphGraphics.refresh();
                                 }
                             });
@@ -287,12 +319,20 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                     }
                 }
             }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+                lastX = e.getX();
+                lastY = e.getY();
+                timer.restart();
+            }
         });
         graphGraphics.setAntiAliased(true);
         graphGraphics.setBendable(true);
         graphGraphics.setConnectable(true);
         graphGraphics.revalidate();
-        
+
 
         // that's all there is to it!...
     }
@@ -342,6 +382,15 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                 graphGraphics.refresh();
             }
         });
+    }
+
+    public void collapse() {
+        for (PDFReaderWorkSpace.PDFSentenceNode node : graph.vertexSet()) {
+            DefaultGraphCell cell = graphAdapter.getVertexCell(node);
+            Map attr = cell.getAttributes();
+            Rectangle2D bound = GraphConstants.getBounds(attr);
+            setVertexAttribute(cell, GraphConstants.getBackground(attr), true, (int) bound.getX(), (int) bound.getY(), 30, 30);
+        }
     }
 
     public void removeVertex(PDFReaderWorkSpace.PDFSentenceNode node) {

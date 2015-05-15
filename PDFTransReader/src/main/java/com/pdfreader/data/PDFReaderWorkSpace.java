@@ -84,6 +84,7 @@ public class PDFReaderWorkSpace {
         private String id;
         private Color color;
         private int page;
+        private boolean hide;
         private HashMap<String, PDFSentenceEdge> edgeMap = new HashMap();
 
         private PDFSentenceNode(String content, String id, int page) {
@@ -136,8 +137,19 @@ public class PDFReaderWorkSpace {
             return false;
         }
 
+        public boolean isHide() {
+            return hide;
+        }
+
+        public void setHide(boolean hide) {
+            this.hide = hide;
+        }
+
         @Override
         public String toString() {
+            if(hide){
+                return "";
+            }
             return "<html>" + content + "</html>";
         }
         

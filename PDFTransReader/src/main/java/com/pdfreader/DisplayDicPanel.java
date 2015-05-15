@@ -94,6 +94,15 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         });
 
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     private void showDicDialog(String word) {
         DicVO content = dic.getWordDefinition(word);
