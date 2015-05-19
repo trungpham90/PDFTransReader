@@ -8,6 +8,7 @@ import com.pdfreader.reader.PDFWord;
 import java.io.IOException;
 import java.util.List;
 import org.apache.pdfbox.util.TextPosition;
+import org.jsoup.Jsoup;
 
 /**
  *
@@ -76,8 +77,10 @@ public class PDFReaderUtil {
         }
         return false;
     }
+
     /**
      * Convert list of PDFWord into text
+     *
      * @param list
      * @return C
      */
@@ -94,5 +97,9 @@ public class PDFReaderUtil {
         }
         System.out.println("STRING " + builder.toString());
         return builder.toString();
+    }
+
+    public static String getTextWithoutHTMLTag(String text) {
+        return Jsoup.parse(text).text();
     }
 }
