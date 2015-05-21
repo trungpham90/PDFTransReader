@@ -94,7 +94,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private HashSet<ISummaryPanelListener> listeners = new HashSet();
     private int pageNum;
     private int lastX = 0, lastY = 0;
-    private static final int COLLAPSE_SIZE_X  = 30, COLLAPSE_SIZE_Y = 30;
+    private static final int COLLAPSE_SIZE_X = 30, COLLAPSE_SIZE_Y = 30;
     private static boolean isSourceHide = false, isTargetHide = false;
     private Timer timer;
 
@@ -142,18 +142,17 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         });
         GraphLayoutCache cache = new GraphLayoutCache(graphAdapter, new DefaultCellViewFactory());
         graphGraphics = new JGraph(graphAdapter, cache);
-
+        
         // jgraph.setPreferredSize(DEFAULT_SIZE);
         graphGraphics.setBackground(Color.WHITE);
 
         add(graphGraphics, BorderLayout.CENTER);
+        
+        
+        
         graphGraphics.addGraphSelectionListener(new GraphSelectionListener() {
             @Override
             public void valueChanged(GraphSelectionEvent e) {
-                DefaultGraphCell cell = (DefaultGraphCell) e.getCell();
-
-                AttributeMap map = cell.getAttributes();
-                Rectangle2D b = GraphConstants.getBounds(map);
 
             }
         });
@@ -173,20 +172,30 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                             notifyVertexCreated("", ex.getX(), ex.getY(), -1);
                         }
                     });
-                    menu.add(item);
-                    if(graphGraphics.getSelectionCells().length > 0){
-                        ArrayList<PDFReaderWorkSpace.PDFSentenceNode> list =new ArrayList();
-                        for(Object o : graphGraphics.getSelectionCells()){
-                            if(o instanceof DefaultGraphCell){
-                                DefaultGraphCell tmp = (DefaultGraphCell) o;
-                                if(tmp.getUserObject() instanceof PDFReaderWorkSpace.PDFSentenceNode){
-                                    list.add((PDFReaderWorkSpace.PDFSentenceNode)tmp.getUserObject());
+                    menu.add(item);                    
+                    if (graphGraphics.getSelectionCells().length > 1) {
+
+
+                        JMenuItem collapseGroup = new JMenuItem("Collapse selected nodes");
+                        collapseGroup.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                ArrayList<PDFReaderWorkSpace.PDFSentenceNode> list = new ArrayList();
+                                for (Object o : graphGraphics.getSelectionCells()) {
+                                    if (o instanceof DefaultGraphCell) {
+                                        DefaultGraphCell tmp = (DefaultGraphCell) o;
+                                        if (tmp.getUserObject() instanceof PDFReaderWorkSpace.PDFSentenceNode) {
+                                            PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) tmp.getUserObject();
+                                            if (!node.isHide()) {
+                                                collapseNode(node);
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        if(list.size() > 0){
-                            
-                        }
+                        });
+                        menu.add(collapseGroup);
+
                     }
 
                     if (cell != null) {
@@ -223,7 +232,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                                 });
                                 menu.add(hide);
                             }
-                            
+
                             //Add button to change color for this node
                             menu.add(new JSeparator());
                             for (final BackgroundColor color : BackgroundColor.values()) {
@@ -320,16 +329,16 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                 if (source != null) {
                     PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) source.getUserObject();
                     setVertexAttribute(source, node.getColor(), false, 0, 0, 0, 0);
-                    if(isSourceHide){
+                    if (isSourceHide) {
                         collapseNode(node);
                         isSourceHide = false;
                     }
                 }
                 source = null;
                 if (target != null) {
-                    PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) target.getUserObject();                    
+                    PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) target.getUserObject();
                     setVertexAttribute(target, node.getColor(), false, 0, 0, 0, 0);
-                    if(isTargetHide){
+                    if (isTargetHide) {
                         collapseNode(node);
                         isTargetHide = false;
                     }
@@ -355,7 +364,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                         graphGraphics.setDragEnabled(false);
                         graphGraphics.setMoveable(false);
                         setVertexAttribute(source, DEFAULT_SOURCE_NODE_COLOR, false, 0, 0, 0, 0);
-                        if(curNode.isHide()){
+                        if (curNode.isHide()) {
                             isSourceHide = true;
                             expandNode(curNode);
                         }
@@ -364,14 +373,14 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                         if (target != null) {
                             PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) target.getUserObject();
                             setVertexAttribute(target, node.getColor(), false, 0, 0, 0, 0);
-                            if(isTargetHide){
+                            if (isTargetHide) {
                                 collapseNode(node);
                             }
                         }
                         target = cell;
                         if (target != null) {
                             setVertexAttribute(target, DEFAULT_TARGET_NODE_COLOR, false, 0, 0, 0, 0);
-                            if(curNode.isHide()){
+                            if (curNode.isHide()) {
                                 isTargetHide = true;
                                 expandNode(curNode);
                             }

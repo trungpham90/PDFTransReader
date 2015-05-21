@@ -21,6 +21,7 @@ public class PDFReaderWorkSpace {
     private HashSet<String> dic = new HashSet();
     private HashMap<String, PDFSentenceNode> nodeList = new HashMap();
     private ArrayList<PDFSentenceEdge> edgeList = new ArrayList();
+    private ArrayList<PDFUnprocessText> unprocessText = new ArrayList();
 
     public void addWordToDic(String word) {
         dic.add(word);
@@ -189,4 +190,18 @@ public class PDFReaderWorkSpace {
             return content;
         }
     }
+    
+    public static class PDFUnprocessText{
+       private String content;
+       private String id;
+
+        private PDFUnprocessText(String content, String id) {
+            this.content = content;
+            this.id = id;
+        }
+       
+       
+    }
+
+   
 }
