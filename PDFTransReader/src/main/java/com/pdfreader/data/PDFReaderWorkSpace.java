@@ -49,31 +49,38 @@ public class PDFReaderWorkSpace {
     }
 
     public PDFSentenceEdge createSentenceEdge(PDFSentenceNode start, PDFSentenceNode end, String content) {
-        if(start.isConnectTo(end.getId())){
+        if (start.isConnectTo(end.getId())) {
             return null;
         }
         UUID id = UUID.randomUUID();
-        
+
         PDFSentenceEdge edge = new PDFSentenceEdge(id.toString(), start.id, end.id, content);
         edgeList.add(edge);
         start.edgeMap.put(id.toString(), edge);
         end.edgeMap.put(id.toString(), edge);
         return edge;
     }
-    
-    public PDFSentenceNode removeNode(String id){
+
+    public PDFUnprocessText createUnprocessText(String content, int page) {
+        UUID id = UUID.randomUUID();
+        PDFUnprocessText text = new PDFUnprocessText(content, id.toString(), page);
+        unprocessText.add(text);
+        return text;
+    }
+
+    public PDFSentenceNode removeNode(String id) {
         PDFSentenceNode node = nodeList.remove(id);
-        for(String edge : node.edgeMap.keySet()){
+        for (String edge : node.edgeMap.keySet()) {
             removeEdge(edge);
         }
         return node;
     }
-    
-    public PDFSentenceEdge removeEdge(String id){
-        for(PDFSentenceEdge edge : edgeList){
-            if(edge.id.equals(id)){
+
+    public PDFSentenceEdge removeEdge(String id) {
+        for (PDFSentenceEdge edge : edgeList) {
+            if (edge.id.equals(id)) {
                 edgeList.remove(edge);
-                return edge;                
+                return edge;
             }
         }
         return null;
@@ -121,17 +128,17 @@ public class PDFReaderWorkSpace {
         public void setColor(Color color) {
             this.color = color;
         }
-        
-        public boolean isConnectTo(String vertexID){
-            if(vertexID == null){
+
+        public boolean isConnectTo(String vertexID) {
+            if (vertexID == null) {
                 throw new NullPointerException("Vertex ID is null!");
             }
-            if(id.equals(vertexID)){
+            if (id.equals(vertexID)) {
                 return true;
             }
-            for(String edge : edgeMap.keySet()){
+            for (String edge : edgeMap.keySet()) {
                 PDFSentenceEdge e = edgeMap.get(edge);
-                if(e.endID.equals(vertexID)){
+                if (e.endID.equals(vertexID)) {
                     return true;
                 }
             }
@@ -148,13 +155,13 @@ public class PDFReaderWorkSpace {
 
         @Override
         public String toString() {
-            if(hide){
+            if (hide) {
                 return "";
             }
             return "<html>" + content + "</html>";
         }
-        
-        public Map<String, PDFSentenceEdge> getEdgeMap(){
+
+        public Map<String, PDFSentenceEdge> getEdgeMap() {
             return new HashMap(edgeMap);
         }
     }
@@ -190,18 +197,37 @@ public class PDFReaderWorkSpace {
             return content;
         }
     }
-    
-    public static class PDFUnprocessText{
-       private String content;
-       private String id;
 
-        private PDFUnprocessText(String content, String id) {
+    public static class PDFUnprocessText {
+
+        private String content;
+        private String id;
+        private int page;
+
+        private PDFUnprocessText(String content, String id, int page) {
             this.content = content;
             this.id = id;
+            this.page = page;
         }
-       
-       
-    }
 
-   
+        public String getContent() {
+            return content;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+    }
 }

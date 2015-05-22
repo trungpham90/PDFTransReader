@@ -4,6 +4,10 @@
  */
 package com.pdfreader.viewer.workspace;
 
+import com.pdfreader.data.PDFReaderWorkSpace;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  *
  * @author Trung Pham
@@ -13,16 +17,19 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     /**
      * Creates new form UnprocessedMapPanel
      */
+    ArrayList<PDFReaderWorkSpace.PDFUnprocessText> unprocessText = new ArrayList();
+
     public UnprocessedMapPanel() {
         initComponents();
     }
 
-    
-      
-    
-    
-    
-    
+    public void addText(PDFReaderWorkSpace.PDFUnprocessText text) {
+        if(!unprocessText.contains(text)){
+            unprocessText.add(text);
+            totalUnprocessLabel.setText("" + unprocessText.size());
+        }        
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,7 +41,6 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -45,8 +51,6 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jScrollPane1.setViewportView(jTextPane1);
-
-        jButton1.setText("Edit");
 
         jButton2.setText("Add");
 
@@ -81,9 +85,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
                         .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(totalUnprocessLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 324, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
@@ -97,7 +99,6 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4)
@@ -111,10 +112,8 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     private void currentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_currentTextFieldActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField currentTextField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

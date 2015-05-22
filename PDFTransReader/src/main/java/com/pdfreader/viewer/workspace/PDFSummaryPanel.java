@@ -142,18 +142,17 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         });
         GraphLayoutCache cache = new GraphLayoutCache(graphAdapter, new DefaultCellViewFactory());
         graphGraphics = new JGraph(graphAdapter, cache);
-        
+
         // jgraph.setPreferredSize(DEFAULT_SIZE);
         graphGraphics.setBackground(Color.WHITE);
 
         add(graphGraphics, BorderLayout.CENTER);
-        
-        
-        
+
+
+
         graphGraphics.addGraphSelectionListener(new GraphSelectionListener() {
             @Override
             public void valueChanged(GraphSelectionEvent e) {
-
             }
         });
 
@@ -172,11 +171,11 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                             notifyVertexCreated("", ex.getX(), ex.getY(), -1);
                         }
                     });
-                    menu.add(item);                    
+                    menu.add(item);
                     if (graphGraphics.getSelectionCells().length > 1) {
 
 
-                        JMenuItem collapseGroup = new JMenuItem("Collapse selected nodes");
+                        JMenuItem collapseGroup = new JMenuItem("Collapse selected");
                         collapseGroup.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -195,6 +194,26 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                             }
                         });
                         menu.add(collapseGroup);
+
+                        JMenuItem expandGroup = new JMenuItem("Expand selected");
+                        expandGroup.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                ArrayList<PDFReaderWorkSpace.PDFSentenceNode> list = new ArrayList();
+                                for (Object o : graphGraphics.getSelectionCells()) {
+                                    if (o instanceof DefaultGraphCell) {
+                                        DefaultGraphCell tmp = (DefaultGraphCell) o;
+                                        if (tmp.getUserObject() instanceof PDFReaderWorkSpace.PDFSentenceNode) {
+                                            PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) tmp.getUserObject();
+                                            if (node.isHide()) {
+                                                expandNode(node);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
 
                     }
 
