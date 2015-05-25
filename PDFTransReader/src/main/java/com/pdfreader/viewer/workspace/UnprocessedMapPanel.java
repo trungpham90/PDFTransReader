@@ -6,7 +6,12 @@ package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
 import java.util.ArrayList;
-import java.util.HashMap;
+import javax.swing.JButton;
+import javax.swing.JPopupMenu;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -14,6 +19,8 @@ import java.util.HashMap;
  */
 public class UnprocessedMapPanel extends javax.swing.JPanel {
 
+    private static final int[] fontSize = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96};
+    private JPopupMenu colorMenu;
     /**
      * Creates new form UnprocessedMapPanel
      */
@@ -24,10 +31,24 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     }
 
     public void addText(PDFReaderWorkSpace.PDFUnprocessText text) {
-        if(!unprocessText.contains(text)){
+        if (!unprocessText.contains(text)) {
             unprocessText.add(text);
             totalUnprocessLabel.setText("" + unprocessText.size());
-        }        
+        }
+    }
+    
+    
+    
+    public void editText(boolean val){
+        boldButton.setEnabled(val);
+        italicButton.setEnabled(val);
+        underlineButton.setEnabled(val);
+        colorButton.setEnabled(val);
+        fontComboBox.setEnabled(val);
+        sizeComboBox.setEnabled(val);
+        nextButton.setEnabled(!val);
+        backButton.setEnabled(!val);
+        currentTextField.setEnabled(!val);        
     }
 
     /**
@@ -39,26 +60,36 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        backButton = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
         currentTextField = new javax.swing.JTextField();
         totalUnprocessLabel = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        pageNumComboBox = new javax.swing.JComboBox();
+        boldButton = new javax.swing.JButton();
+        italicButton = new javax.swing.JButton();
+        underlineButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        contentTextPane = new javax.swing.JTextPane();
+        fontComboBox = new javax.swing.JComboBox();
+        sizeComboBox = new javax.swing.JComboBox();
+        colorButton = new javax.swing.JButton();
+        editToggleButton = new javax.swing.JToggleButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-
-        jScrollPane1.setViewportView(jTextPane1);
 
         jButton2.setText("Add");
 
         jButton3.setText("Remove");
 
-        jButton4.setText("<-");
+        backButton.setText("<-");
 
-        jButton5.setText("->");
+        nextButton.setText("->");
 
         currentTextField.setText("jTextField1");
         currentTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -69,57 +100,333 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
 
         totalUnprocessLabel.setText("/ 0");
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setText("Content:");
+
+        jLabel2.setText("Page:");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("Edit");
+
+        pageNumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        boldButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        boldButton.setText("B");
+        boldButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boldButtonActionPerformed(evt);
+            }
+        });
+
+        italicButton.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        italicButton.setText("I");
+        italicButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                italicButtonActionPerformed(evt);
+            }
+        });
+
+        underlineButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        underlineButton.setText("U");
+        underlineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                underlineButtonActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(contentTextPane);
+
+        fontComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        fontComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fontComboBoxActionPerformed(evt);
+            }
+        });
+
+        sizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        sizeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sizeComboBoxActionPerformed(evt);
+            }
+        });
+
+        colorButton.setText("A");
+        colorButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pageNumComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(boldButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(italicButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(underlineButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fontComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(sizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(colorButton)
+                                .addGap(0, 450, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1))))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel3)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(boldButton)
+                    .addComponent(italicButton)
+                    .addComponent(underlineButton)
+                    .addComponent(fontComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(colorButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pageNumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(50, 50, 50))
+        );
+
+        editToggleButton.setText("Edit");
+        editToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editToggleButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(totalUnprocessLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)
-                        .addGap(1, 1, 1)))
+                .addComponent(backButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(totalUnprocessLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
+                .addComponent(editToggleButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
                 .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(239, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5)
+                    .addComponent(nextButton)
+                    .addComponent(backButton)
                     .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(totalUnprocessLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(totalUnprocessLabel)
+                    .addComponent(editToggleButton))
+                .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 43, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void currentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_currentTextFieldActionPerformed
+
+    private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));
+        boolean notBold = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isBold(e.getAttributes())) {
+                notBold = true;
+                break;
+            }
+        }
+        if (notBold) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setBold(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setBold(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        }
+    }//GEN-LAST:event_boldButtonActionPerformed
+
+    private void italicButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicButtonActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        boolean notItalic = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isItalic(e.getAttributes())) {
+                notItalic = true;
+                break;
+            }
+        }
+        if (notItalic) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setItalic(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setItalic(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        }
+    }//GEN-LAST:event_italicButtonActionPerformed
+
+    private void underlineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underlineButtonActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));
+        boolean notUnderline = false;
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            if (!StyleConstants.isUnderline(e.getAttributes())) {
+                notUnderline = true;
+                break;
+            }
+        }
+        if (notUnderline) {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setUnderline(att, true);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        } else {
+            for (int i = start; i < end; i++) {
+                Element e = doc.getCharacterElement(i);
+                SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+                StyleConstants.setUnderline(att, false);
+                doc.setCharacterAttributes(i, 1, att, true);
+            }
+        }
+    }//GEN-LAST:event_underlineButtonActionPerformed
+
+    private void fontComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontComboBoxActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        String font = fontComboBox.getSelectedItem().toString();
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+            StyleConstants.setFontFamily(att, font);
+            doc.setCharacterAttributes(i, 1, att, true);
+        }
+    }//GEN-LAST:event_fontComboBoxActionPerformed
+
+    private void sizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeComboBoxActionPerformed
+        int start = contentTextPane.getSelectionStart();
+        int end = contentTextPane.getSelectionEnd();
+        int size = Integer.parseInt(sizeComboBox.getSelectedItem().toString());
+        StyledDocument doc = contentTextPane.getStyledDocument();
+        for (int i = start; i < end; i++) {
+            Element e = doc.getCharacterElement(i);
+            SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
+            StyleConstants.setFontSize(att, size);
+            doc.setCharacterAttributes(i, 1, att, true);
+        }
+
+    }//GEN-LAST:event_sizeComboBoxActionPerformed
+
+    private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
+
+        JButton button = (JButton) evt.getSource();
+        colorMenu.show(button, 0, button.getHeight());
+
+    }//GEN-LAST:event_colorButtonActionPerformed
+
+    private void editToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editToggleButtonActionPerformed
+        if(editToggleButton.isSelected()){
+            editText(true);
+        }else{
+            editText(false);
+        }
+        
+    }//GEN-LAST:event_editToggleButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backButton;
+    private javax.swing.JButton boldButton;
+    private javax.swing.JButton colorButton;
+    private javax.swing.JTextPane contentTextPane;
     private javax.swing.JTextField currentTextField;
+    private javax.swing.JToggleButton editToggleButton;
+    private javax.swing.JComboBox fontComboBox;
+    private javax.swing.JButton italicButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JButton nextButton;
+    private javax.swing.JComboBox pageNumComboBox;
+    private javax.swing.JComboBox sizeComboBox;
     private javax.swing.JLabel totalUnprocessLabel;
+    private javax.swing.JButton underlineButton;
     // End of variables declaration//GEN-END:variables
 }
