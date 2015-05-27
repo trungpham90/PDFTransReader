@@ -5,9 +5,13 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
+import com.pdfreader.util.HTMLHelper;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -25,9 +29,16 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
      * Creates new form UnprocessedMapPanel
      */
     ArrayList<PDFReaderWorkSpace.PDFUnprocessText> unprocessText = new ArrayList();
+    private int currentItem = 0;
 
     public UnprocessedMapPanel() {
         initComponents();
+        init();
+    }
+
+    private void init() {
+        editText(false);
+
     }
 
     public void addText(PDFReaderWorkSpace.PDFUnprocessText text) {
@@ -35,11 +46,12 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
             unprocessText.add(text);
             totalUnprocessLabel.setText("" + unprocessText.size());
         }
+        if (unprocessText.size() == 1) {
+            load(unprocessText.get(0));
+        }
     }
-    
-    
-    
-    public void editText(boolean val){
+
+    public void editText(boolean val) {
         boldButton.setEnabled(val);
         italicButton.setEnabled(val);
         underlineButton.setEnabled(val);
@@ -48,7 +60,15 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
         sizeComboBox.setEnabled(val);
         nextButton.setEnabled(!val);
         backButton.setEnabled(!val);
-        currentTextField.setEnabled(!val);        
+        currentTextField.setEnabled(!val);
+    }
+
+    private void load(PDFReaderWorkSpace.PDFUnprocessText textNode) {
+        try {
+            HTMLHelper.convertHtmlToTextStyle(textNode.getContent(), contentTextPane.getStyledDocument());
+        } catch (BadLocationException ex) {
+            Logger.getLogger(UnprocessedMapPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -88,10 +108,20 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
         jButton3.setText("Remove");
 
         backButton.setText("<-");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
 
         nextButton.setText("->");
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
 
-        currentTextField.setText("jTextField1");
+        currentTextField.setText("  ");
         currentTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 currentTextFieldActionPerformed(evt);
@@ -232,10 +262,10 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(totalUnprocessLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 468, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 494, Short.MAX_VALUE)
                 .addComponent(editToggleButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
@@ -269,7 +299,6 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void currentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentTextFieldActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_currentTextFieldActionPerformed
 
     private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
@@ -399,14 +428,32 @@ public class UnprocessedMapPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_colorButtonActionPerformed
 
     private void editToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editToggleButtonActionPerformed
-        if(editToggleButton.isSelected()){
+        if (editToggleButton.isSelected()) {
             editText(true);
-        }else{
+        } else {
             editText(false);
         }
-        
+
     }//GEN-LAST:event_editToggleButtonActionPerformed
 
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+        if (currentItem + 1 < unprocessText.size()) {
+            currentItem++;
+            load(unprocessText.get(currentItem));
+            currentTextField.setText("" + (1 + currentItem));
+        }
+    }//GEN-LAST:event_nextButtonActionPerformed
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+
+        if (currentItem - 1 >= 0) {
+            currentItem--;
+            load(unprocessText.get(currentItem));
+            currentTextField.setText("" + (1 + currentItem));
+        }
+
+
+    }//GEN-LAST:event_backButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JButton boldButton;

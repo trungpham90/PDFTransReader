@@ -5,11 +5,10 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
-import com.pdfreader.viewer.workspace.ColorSectionPanel.HTMLColor;
+import com.pdfreader.util.HTMLHelper;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.util.Arrays;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +18,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -30,11 +28,11 @@ import javax.swing.text.StyledDocument;
  */
 public class VertexChangeDialog extends javax.swing.JDialog implements ColorSectionPanel.ColorSelectionListener {
 
-    private static final int[] fontSize = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96};
+   
     private JPopupMenu colorMenu;
 
     @Override
-    public void colorSelection(boolean text, HTMLColor color) {
+    public void colorSelection(boolean text, HTMLHelper.HTMLColor color) {
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
         // System.out.println("SELECTION " + contentTextPane.getText().substring(start, end + 1));    
@@ -54,28 +52,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
 
     }
 
-    private static enum HTMLTag {
-
-        BOLD("<b>", "</b>"),
-        ITALIC("<i>", "</i>"),
-        UNDERLINE("<u>", "</u>"),
-        FONT("<font>", "</font>");
-        private String start, end;
-
-        HTMLTag(String start, String end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public static HTMLTag getTag(String text) {
-            for (HTMLTag tag : values()) {
-                if (tag.start.equals(text) || tag.end.equals(text)) {
-                    return tag;
-                }
-            }
-            return null;
-        }
-    }
+    
     private PDFReaderWorkSpace.PDFSentenceNode node;
     private int pageNum;
 
@@ -107,13 +84,13 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         }
         fontComboBox.setModel(fontModel);
         DefaultComboBoxModel<Integer> sizeModel = new DefaultComboBoxModel();
-        for (int i : fontSize) {
+        for (int i : HTMLHelper.HTML_FONT_SIZE) {
             sizeModel.addElement(i);
         }
         sizeComboBox.setModel(sizeModel);
 
         try {
-            convertHtmlToTextStyle(node.getContent());
+            HTMLHelper.convertHtmlToTextStyle(node.getContent(), contentTextPane.getStyledDocument());
         } catch (BadLocationException ex) {
             Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -460,91 +437,9 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         return "<html>" + text + "</html>";
     }
 
-    private void convertHtmlToTextStyle(String text) throws BadLocationException {
+    
 
-        Stack<String> stack = new Stack();
-        Stack<Integer> pos = new Stack();
-        StyledDocument doc = contentTextPane.getStyledDocument();
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '<') {
-                boolean neg = false;
-                if (i + 1 < text.length() && text.charAt(i + 1) == '/') {
-                    neg = true;
-                }
-                String cur = "";
-                while (text.charAt(i) != '>') {
-                    cur += text.charAt(i);
-                    i++;
-                }
-                cur += text.charAt(i);
-                if (!neg) {
-                    stack.add(cur);
-                    pos.add(contentTextPane.getStyledDocument().getLength());
-                } else {
-                    String tag = stack.pop();
-                    //Check tag by using closing tag is more easy.
-                    HTMLTag t = HTMLTag.getTag(cur);
-                    int start = pos.pop();
-                    if (t != null) {
-
-                        SimpleAttributeSet att = new SimpleAttributeSet();
-                        switch (t) {
-                            case BOLD:
-                                StyleConstants.setBold(att, true);
-                                break;
-                            case ITALIC:
-                                StyleConstants.setItalic(att, true);
-                                break;
-                            case UNDERLINE:
-                                StyleConstants.setUnderline(att, true);
-                                break;
-                            case FONT:
-                                setFont(tag, att);
-                                break;
-                        }
-                        doc.setCharacterAttributes(start, doc.getLength() - start, att, true);
-
-                    }
-                }
-            } else {
-                doc.insertString(doc.getLength(), "" + text.charAt(i), null);
-            }
-        }
-    }
-
-    private void setFont(String tag, MutableAttributeSet att) {
-
-        String[] tmp = tag.substring(1, tag.length() - 1).split(" ");
-        System.out.println(Arrays.toString(tmp));
-        for (String value : tmp) {
-            if (value.startsWith("face")) {
-                String font = value.split("=")[1];
-                font = font.substring(1, font.length() - 1);
-                System.out.println(font);
-                StyleConstants.setFontFamily(att, font);
-            } else if (value.startsWith("color")) {
-                String color = value.split("=")[1];
-                color = color.substring(1, color.length() - 1);
-                int colorValue = Integer.parseInt(color, 16);
-                HTMLColor c = HTMLColor.getColor(colorValue);
-                StyleConstants.setForeground(att, new Color(c.getNumber()));
-            } else if (value.startsWith("size")) {
-                String size = value.split("=")[1];
-
-                double s = Double.parseDouble(size);
-                //System.out.println(s*11/3);
-                StyleConstants.setFontSize(att, (int) (s * 11 / 3));
-            } else if(value.startsWith("style")){
-                String s = value.split("=")[1];
-                s = s.substring(1, s.length() - 1);
-                String color = s.split(":")[1];
-                int colorValue = Integer.parseInt(color, 16);
-                HTMLColor c = HTMLColor.getColor(colorValue);
-                StyleConstants.setBackground(att, new Color(c.getNumber()));
-            }
-        }
-
-    }
+   
 
     private String getTextStyleToHTML() throws BadLocationException {
         StringBuilder builder = new StringBuilder();
@@ -562,20 +457,20 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         StringBuilder prefix = new StringBuilder();
         Stack<String> stack = new Stack();
         if (StyleConstants.isBold(set)) {
-            prefix.append(HTMLTag.BOLD.start);
-            stack.push(HTMLTag.BOLD.end);
+            prefix.append(HTMLHelper.HTMLTag.BOLD.getStart());
+            stack.push(HTMLHelper.HTMLTag.BOLD.getEnd());
         }
         if (StyleConstants.isItalic(set)) {
-            prefix.append(HTMLTag.ITALIC.start);
-            stack.push(HTMLTag.ITALIC.end);
+            prefix.append(HTMLHelper.HTMLTag.ITALIC.getStart());
+            stack.push(HTMLHelper.HTMLTag.ITALIC.getEnd());
         }
         if (StyleConstants.isUnderline(set)) {
-            prefix.append(HTMLTag.UNDERLINE.start);
-            stack.push(HTMLTag.UNDERLINE.end);
+            prefix.append(HTMLHelper.HTMLTag.UNDERLINE.getStart());
+            stack.push(HTMLHelper.HTMLTag.UNDERLINE.getEnd());
         }
 
         prefix.append(getOpenFontTag(set));
-        stack.push(HTMLTag.FONT.end);
+        stack.push(HTMLHelper.HTMLTag.FONT.getEnd());
 
         prefix.append(text);
         while (!stack.isEmpty()) {
@@ -588,7 +483,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         String font = StyleConstants.getFontFamily(set);
         double size = StyleConstants.getFontSize(set) * 3f / 11;
         Color c = StyleConstants.getForeground(set);
-        ColorSectionPanel.HTMLColor color = ColorSectionPanel.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
+        HTMLHelper.HTMLColor color = HTMLHelper.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
         String result = "<font";
         if (font != null) {
             result += " face=\"" + font + "\"";
@@ -599,7 +494,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         Color back = (Color) set.getAttribute(StyleConstants.Background);
 
         if (back != null) {
-            ColorSectionPanel.HTMLColor backColor = ColorSectionPanel.HTMLColor.getColor(back.getRGB() ^ 0xff000000);
+            HTMLHelper.HTMLColor backColor = HTMLHelper.HTMLColor.getColor(back.getRGB() ^ 0xff000000);
             result += " style=\"BACKGROUND-COLOR:" + Integer.toHexString(backColor.getNumber()) + "\"";
         }
         result += " size=" + size;

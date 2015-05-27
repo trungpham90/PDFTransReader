@@ -5,6 +5,7 @@
 package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.util.ColorIcon;
+import com.pdfreader.util.HTMLHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,11 +51,11 @@ public class ColorSectionPanel extends javax.swing.JPanel {
         int x = 0;
         int y = 0;
         
-        JButton[] buttons = new JButton[HTMLColor.values().length];
+        JButton[] buttons = new JButton[HTMLHelper.HTMLColor.values().length];
         int index = 0;
-        for (final HTMLColor color : HTMLColor.values()) {
+        for (final HTMLHelper.HTMLColor color : HTMLHelper.HTMLColor.values()) {
             buttons[index] = new JButton();
-            ColorIcon icon = new ColorIcon(30, 30, new Color(color.number));
+            ColorIcon icon = new ColorIcon(30, 30, new Color(color.getNumber()));
             buttons[index].setIcon(icon);           
             buttons[index].setMargin(new Insets(0, 0, 0, 0));
             buttons[index].setContentAreaFilled(false);
@@ -83,70 +84,16 @@ public class ColorSectionPanel extends javax.swing.JPanel {
         listeners.add(lis);
     }
 
-    public void notifyListeners(boolean text, HTMLColor color) {
+    public void notifyListeners(boolean text, HTMLHelper.HTMLColor color) {
         for (ColorSelectionListener lis : listeners) {
             lis.colorSelection(text, color);
         }
     }
 
-    public static enum HTMLColor {
-
-        RED("Red", 0xFF0000),
-        CYAN("Cyan", 0x00FFFF),
-        BLUE("Blue", 0x0000FF),
-        DARKBLUE("DarkBlue", 0x0000A0),
-        LIGHTBLUE("LightBlue", 0xADD8E6),
-        PURPLE("Purple", 0x800080),
-        YELLOW("Yellow", 0xFFFF00),
-        LIME("Lime", 0x00FF00),
-        MAGENTA("Magenta", 0xFF00FF),
-        WHITE("White", 0xFFFFFF),
-        SILVER("Silver", 0xC0C0C0),
-        GRAY("Gray", 0x808080),
-        BLACK("Black", 0x000000),
-        ORANGE("Orange", 0xFFA500),
-        BROWN("Brown", 0xA52A2A),
-        MAROON("Maroon", 0x800000),
-        GREEN("Green", 0x008000),
-        OLIVE("Olive", 0x808000);
-        private String name;
-        private int number;
-
-        HTMLColor(String name, int number) {
-            this.name = name;
-            this.number = number;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public static HTMLColor getColor(int number) {
-            for (HTMLColor c : values()) {               
-                if (c.number == number) {
-                    return c;
-                }
-            }
-            return null;
-        }
-
-        public static HTMLColor getColor(String name) {
-            for (HTMLColor c : values()) {                
-                if (c.name.equals(name)) {
-                    return c;
-                }
-            }
-            return null;
-        }
-    }
-
+   
     public static interface ColorSelectionListener {
 
-        public void colorSelection(boolean text, HTMLColor color);
+        public void colorSelection(boolean text, HTMLHelper.HTMLColor color);
     }
 
     /**
