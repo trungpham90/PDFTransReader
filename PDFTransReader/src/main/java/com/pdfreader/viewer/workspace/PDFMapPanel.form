@@ -16,12 +16,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jSplitPane1" alignment="0" pref="865" max="32767" attributes="0"/>
+          <Component id="jSplitPane1" alignment="0" pref="839" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jSplitPane1" alignment="0" pref="706" max="32767" attributes="0"/>
+          <Component id="jSplitPane1" alignment="0" pref="620" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -34,14 +34,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
-        <Component class="com.pdfreader.viewer.workspace.PDFSummaryPanel" name="pDFSummaryPanel1">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-              <JSplitPaneConstraints position="top"/>
-            </Constraint>
-          </Constraints>
-        </Component>
-        <Component class="com.pdfreader.viewer.workspace.PDFSummaryPanel" name="pDFSummaryPanel2">
+        <Component class="com.pdfreader.viewer.workspace.PDFSummaryPanel" name="pDFSummaryPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="top"/>
@@ -65,15 +58,19 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="863" max="32767" attributes="0"/>
+                  <Component id="unprocessedMapPanel" alignment="0" pref="837" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="350" max="32767" attributes="0"/>
+                  <Component id="unprocessedMapPanel" alignment="0" pref="264" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
+          <SubComponents>
+            <Component class="com.pdfreader.viewer.workspace.UnprocessedMapPanel" name="unprocessedMapPanel">
+            </Component>
+          </SubComponents>
         </Container>
       </SubComponents>
     </Container>

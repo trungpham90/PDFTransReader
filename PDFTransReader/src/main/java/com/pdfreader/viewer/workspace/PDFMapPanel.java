@@ -19,7 +19,13 @@ public class PDFMapPanel extends javax.swing.JPanel {
 
     
     
+    public PDFSummaryPanel getSummaryPanel(){
+        return pDFSummaryPanel;
+    }
     
+    public UnprocessedMapPanel getUnprocessedMapPanel(){
+        return unprocessedMapPanel;
+    }
     
     
     
@@ -33,26 +39,25 @@ public class PDFMapPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        pDFSummaryPanel1 = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
-        pDFSummaryPanel2 = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
+        pDFSummaryPanel = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
         jScrollBar1 = new javax.swing.JScrollBar();
         storePanel = new javax.swing.JPanel();
+        unprocessedMapPanel = new com.pdfreader.viewer.workspace.UnprocessedMapPanel();
 
         jSplitPane1.setDividerLocation(350);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setTopComponent(pDFSummaryPanel1);
-        jSplitPane1.setTopComponent(pDFSummaryPanel2);
+        jSplitPane1.setTopComponent(pDFSummaryPanel);
         jSplitPane1.setRightComponent(jScrollBar1);
 
         javax.swing.GroupLayout storePanelLayout = new javax.swing.GroupLayout(storePanel);
         storePanel.setLayout(storePanelLayout);
         storePanelLayout.setHorizontalGroup(
             storePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 863, Short.MAX_VALUE)
+            .addComponent(unprocessedMapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
         );
         storePanelLayout.setVerticalGroup(
             storePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 350, Short.MAX_VALUE)
+            .addComponent(unprocessedMapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
         );
 
         jSplitPane1.setBottomComponent(storePanel);
@@ -61,18 +66,18 @@ public class PDFMapPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JSplitPane jSplitPane1;
-    private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel1;
-    private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel2;
+    private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel;
     private javax.swing.JPanel storePanel;
+    private com.pdfreader.viewer.workspace.UnprocessedMapPanel unprocessedMapPanel;
     // End of variables declaration//GEN-END:variables
 }

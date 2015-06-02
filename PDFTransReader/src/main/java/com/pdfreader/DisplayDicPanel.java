@@ -95,15 +95,10 @@ public class DisplayDicPanel extends javax.swing.JPanel {
 
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-
+    /**
+     * Display Dictionary of selected word
+     * @param word 
+     */
     private void showDicDialog(String word) {
         DicVO content = dic.getWordDefinition(word);
         if (content != null) {
@@ -277,7 +272,6 @@ public class DisplayDicPanel extends javax.swing.JPanel {
 
         if (showToggleButton.isSelected()) {
             splitPane.setDividerLocation(0.75f);
-
         } else {
             splitPane.setDividerLocation(1.0f);
         }
@@ -387,7 +381,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         String content = PDFReaderUtil.getTextFromPDFList(selectedList);
-                                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(content, page);
+                                        PDFReaderWorkSpace.PDFUnprocessText node =  workspace.createUnprocessText(content, page);
                                         listPanel.addVertex(node);
                                     }
                                 });
@@ -406,7 +400,6 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                 leftPanel.revalidate();
                 leftPanel.repaint();
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
 
             } catch (IOException ex) {
             }

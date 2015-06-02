@@ -362,7 +362,6 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
                 doc.setCharacterAttributes(i, 1, att, true);
             }
         }
-
     }//GEN-LAST:event_italicButtonActionPerformed
 
     private void underlineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underlineButtonActionPerformed
@@ -427,19 +426,15 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
     }//GEN-LAST:event_sizeComboBoxActionPerformed
 
     private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
-
         JButton button = (JButton) evt.getSource();
         colorMenu.show(button, 0, button.getHeight());
-
-
     }//GEN-LAST:event_colorButtonActionPerformed
     private String wrapHtmlTag(String text) {
         return "<html>" + text + "</html>";
     }
 
     
-
-   
+  
 
     private String getTextStyleToHTML() throws BadLocationException {
         StringBuilder builder = new StringBuilder();

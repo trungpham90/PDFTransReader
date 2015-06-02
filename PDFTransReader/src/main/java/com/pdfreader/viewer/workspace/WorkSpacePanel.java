@@ -27,20 +27,20 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     }
     
     private void init() {
-        pDFSummaryPanel.setPageNum(pageNum);
-        pDFSummaryPanel.addListener(this);
+        pDFMapPanel.getSummaryPanel().setPageNum(pageNum);
+        pDFMapPanel.getSummaryPanel().addListener(this);
     }
     
-    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node) {
-        pDFSummaryPanel.addVertex(node);
+    public void addVertex(PDFReaderWorkSpace.PDFUnprocessText node) {
+        pDFMapPanel.getUnprocessedMapPanel().addUnprocessedText(node);
     }
     
     public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y) {
-        pDFSummaryPanel.addVertex(node, x, y);
+        pDFMapPanel.getSummaryPanel().addVertex(node, x, y);
     }
     
     public void addEdge(PDFReaderWorkSpace.PDFSentenceEdge edge, PDFReaderWorkSpace.PDFSentenceNode source, PDFReaderWorkSpace.PDFSentenceNode target) {
-        pDFSummaryPanel.addEdge(edge, source, target);
+        pDFMapPanel.getSummaryPanel().addEdge(edge, source, target);
     }
     
     public void populateListContent(List<String> content) {
@@ -84,7 +84,7 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         wordList = new javax.swing.JList();
-        pDFSummaryPanel = new com.pdfreader.viewer.workspace.PDFSummaryPanel();
+        pDFMapPanel = new com.pdfreader.viewer.workspace.PDFMapPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -106,17 +106,17 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
         jScrollPane2.setViewportView(wordList);
 
         jTabbedPane1.addTab("Word List", jScrollPane2);
-        jTabbedPane1.addTab("Summary", pDFSummaryPanel);
+        jTabbedPane1.addTab("Summary", pDFMapPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -127,7 +127,7 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private com.pdfreader.viewer.workspace.PDFSummaryPanel pDFSummaryPanel;
+    private com.pdfreader.viewer.workspace.PDFMapPanel pDFMapPanel;
     private javax.swing.JList wordList;
     // End of variables declaration//GEN-END:variables
 
