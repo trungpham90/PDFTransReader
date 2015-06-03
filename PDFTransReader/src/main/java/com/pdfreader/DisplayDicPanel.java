@@ -6,6 +6,7 @@ package com.pdfreader;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
 import com.pdfreader.data.PDFReaderWorkSpace.PDFSentenceNode;
+import com.pdfreader.data.PDFReaderWorkSpace.PDFUnprocessText;
 import com.pdfreader.dic.DicManager;
 import com.pdfreader.dic.DicVO;
 import com.pdfreader.dic.IDic;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -38,6 +41,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 import org.apache.pdfbox.util.ExtensionFileFilter;
 
 /**
@@ -94,10 +98,11 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         });
 
     }
-    
+
     /**
      * Display Dictionary of selected word
-     * @param word 
+     *
+     * @param word
      */
     private void showDicDialog(String word) {
         DicVO content = dic.getWordDefinition(word);
@@ -334,6 +339,27 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     public void edgeRemoved(String id) {
                         workspace.removeEdge(id);
                     }
+
+                    @Override
+                    public void unprocessedTextAdd(PDFUnprocessText text) {
+                        PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(text.getContent(), text.getPage());
+                        listPanel.addVertex(node);
+                        try {
+                            listPanel.removeUnprocessText(text);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(DisplayDicPanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    @Override
+                    public void unprocessedTextRemove(PDFUnprocessText text) {
+                        PDFReaderWorkSpace.PDFUnprocessText node = workspace.removeUnprocessText(text);
+                        try {
+                            listPanel.removeUnprocessText(node);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(DisplayDicPanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 });
 
                 rightPanel.add(listPanel, BorderLayout.CENTER);
@@ -381,8 +407,8 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         String content = PDFReaderUtil.getTextFromPDFList(selectedList);
-                                        PDFReaderWorkSpace.PDFUnprocessText node =  workspace.createUnprocessText(content, page);
-                                        listPanel.addVertex(node);
+                                        PDFReaderWorkSpace.PDFUnprocessText node = workspace.createUnprocessText(content, page);
+                                        listPanel.addUnprocessText(node);
                                     }
                                 });
                                 popup.add(item);

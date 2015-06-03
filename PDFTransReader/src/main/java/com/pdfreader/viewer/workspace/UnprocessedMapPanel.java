@@ -101,9 +101,11 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
                         currentItem--;
                         loadUnprocessText(currentItem);
                     } else {
-                        clearEditScreen();
+                        loadUnprocessText(currentItem);
                     }
                 }
+            } else {
+                clearEditScreen();
             }
         }
     }
@@ -304,7 +306,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
                                 .addComponent(sizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(colorButton)
-                                .addGap(0, 450, Short.MAX_VALUE))
+                                .addGap(0, 544, Short.MAX_VALUE))
                             .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
@@ -352,7 +354,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
                 .addComponent(currentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(totalUnprocessLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 494, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 588, Short.MAX_VALUE)
                 .addComponent(editToggleButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addButton)
@@ -368,7 +370,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(239, Short.MAX_VALUE)
+                .addGap(250, 250, 250)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
                     .addComponent(removeButton)
@@ -381,7 +383,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 43, Short.MAX_VALUE)))
+                    .addGap(0, 65, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 

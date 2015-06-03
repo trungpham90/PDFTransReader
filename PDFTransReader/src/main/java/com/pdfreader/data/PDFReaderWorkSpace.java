@@ -68,6 +68,13 @@ public class PDFReaderWorkSpace {
         return text;
     }
 
+    public PDFUnprocessText removeUnprocessText(PDFUnprocessText txt) {
+        if (unprocessText.remove(txt)) {
+            return txt;
+        }
+        throw new NullPointerException("The unprocess text is not exist!");
+    }
+
     public PDFSentenceNode removeNode(String id) {
         PDFSentenceNode node = nodeList.remove(id);
         for (String edge : node.edgeMap.keySet()) {

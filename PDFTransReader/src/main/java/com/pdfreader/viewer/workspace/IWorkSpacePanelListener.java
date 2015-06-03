@@ -21,4 +21,8 @@ public interface IWorkSpacePanelListener {
     public void vertexRemoved(String id);
 
     public void edgeRemoved(String id);
+
+    public void unprocessedTextAdd(PDFReaderWorkSpace.PDFUnprocessText text);
+
+    public void unprocessedTextRemove(PDFReaderWorkSpace.PDFUnprocessText text);
 }

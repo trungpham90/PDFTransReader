@@ -6,15 +6,17 @@ package com.pdfreader.viewer.workspace;
 
 import com.pdfreader.data.PDFReaderWorkSpace;
 import com.pdfreader.data.PDFReaderWorkSpace.PDFSentenceNode;
+import com.pdfreader.data.PDFReaderWorkSpace.PDFUnprocessText;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.text.BadLocationException;
 
 /**
  *
  * @author Trung Pham
  */
-public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePanelSubject, ISummaryPanelListener {
+public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePanelSubject, ISummaryPanelListener , UnprocessedMapPanel.UnprocessedMapPanelListener {
     
     private HashSet<IWorkSpacePanelListener> listeners = new HashSet();
     private DefaultListModel<String> model;
@@ -29,10 +31,19 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     private void init() {
         pDFMapPanel.getSummaryPanel().setPageNum(pageNum);
         pDFMapPanel.getSummaryPanel().addListener(this);
+        pDFMapPanel.getUnprocessedMapPanel().addListener(this);
     }
     
-    public void addVertex(PDFReaderWorkSpace.PDFUnprocessText node) {
+    public void addUnprocessText(PDFReaderWorkSpace.PDFUnprocessText node) {
         pDFMapPanel.getUnprocessedMapPanel().addUnprocessedText(node);
+    }
+    
+    public void removeUnprocessText(PDFReaderWorkSpace.PDFUnprocessText node) throws BadLocationException{
+        pDFMapPanel.getUnprocessedMapPanel().removeUnprocssedText(node);
+    }
+    
+    public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node){
+        pDFMapPanel.getSummaryPanel().addVertex(node);
     }
     
     public void addVertex(PDFReaderWorkSpace.PDFSentenceNode node, int x, int y) {
@@ -193,6 +204,30 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     public void notifyEdgeReomve(String id) {
        for(IWorkSpacePanelListener lis : listeners){
             lis.edgeRemoved(id);
+        }
+    }
+
+    @Override
+    public void addToWorkSpace(PDFUnprocessText txt) {
+       notifyUnprocessTextAdded(txt);
+    }
+
+    @Override
+    public void removeFromWorkSpace(PDFUnprocessText txt) {
+        notifyUnprocessTextRemove(txt);
+    }
+
+    @Override
+    public void notifyUnprocessTextAdded(PDFUnprocessText text) {
+        for(IWorkSpacePanelListener lis : listeners){
+            lis.unprocessedTextAdd(text);
+        }
+    }
+
+    @Override
+    public void notifyUnprocessTextRemove(PDFUnprocessText text) {
+        for(IWorkSpacePanelListener lis : listeners){
+            lis.unprocessedTextRemove(text);
         }
     }
 }
