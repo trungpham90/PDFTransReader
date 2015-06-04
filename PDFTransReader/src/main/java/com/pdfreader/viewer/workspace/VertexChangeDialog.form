@@ -168,6 +168,9 @@
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pageNumComboBoxActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="boldButton">
           <Properties>

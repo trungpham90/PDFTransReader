@@ -520,7 +520,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private void positionVertexAt(PDFReaderWorkSpace.PDFSentenceNode vertex, int x, int y) {
         DefaultGraphCell cell = graphAdapter.getVertexCell(vertex);
 
-        setVertexAttribute(cell, vertex.getColor(), true, x, y, getEstimatedLength(vertex.toString()), getEstimatedHeight(vertex.toString()));
+        setVertexAttribute(cell, vertex.getColor(), true, x, y, getEstimatedLength(PDFReaderUtil.getTextWithoutHTMLTag(vertex.toString())), getEstimatedHeight(PDFReaderUtil.getTextWithoutHTMLTag(vertex.toString())));
     }
 
     /**

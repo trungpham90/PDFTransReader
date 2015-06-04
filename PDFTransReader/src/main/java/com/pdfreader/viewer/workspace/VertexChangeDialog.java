@@ -153,6 +153,11 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         jLabel3.setText("Edit");
 
         pageNumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        pageNumComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pageNumComboBoxActionPerformed(evt);
+            }
+        });
 
         boldButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         boldButton.setText("B");
@@ -295,7 +300,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
             return;
         }
         try {
-            node.setContent(getTextStyleToHTML());
+            node.setContent(HTMLHelper.getTextStyleToHTML(contentTextPane.getStyledDocument()));
         } catch (BadLocationException ex) {
             Logger.getLogger(VertexChangeDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -429,6 +434,14 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         JButton button = (JButton) evt.getSource();
         colorMenu.show(button, 0, button.getHeight());
     }//GEN-LAST:event_colorButtonActionPerformed
+
+    private void pageNumComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageNumComboBoxActionPerformed
+
+        
+        
+        
+        
+    }//GEN-LAST:event_pageNumComboBoxActionPerformed
     private String wrapHtmlTag(String text) {
         return "<html>" + text + "</html>";
     }
@@ -436,68 +449,9 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
     
   
 
-    private String getTextStyleToHTML() throws BadLocationException {
-        StringBuilder builder = new StringBuilder();
-        StyledDocument doc = contentTextPane.getStyledDocument();
-        for (int i = 0; i < doc.getLength(); i++) {
-            Element element = doc.getCharacterElement(i);
-            StringBuilder tmp = new StringBuilder();
-            AttributeSet set = element.getAttributes();
-            builder.append(getTextStyleToHTML(doc.getText(i, 1), set));
-        }
-        return builder.toString();
-    }
+   
 
-    private String getTextStyleToHTML(String text, AttributeSet set) {
-        StringBuilder prefix = new StringBuilder();
-        Stack<String> stack = new Stack();
-        if (StyleConstants.isBold(set)) {
-            prefix.append(HTMLHelper.HTMLTag.BOLD.getStart());
-            stack.push(HTMLHelper.HTMLTag.BOLD.getEnd());
-        }
-        if (StyleConstants.isItalic(set)) {
-            prefix.append(HTMLHelper.HTMLTag.ITALIC.getStart());
-            stack.push(HTMLHelper.HTMLTag.ITALIC.getEnd());
-        }
-        if (StyleConstants.isUnderline(set)) {
-            prefix.append(HTMLHelper.HTMLTag.UNDERLINE.getStart());
-            stack.push(HTMLHelper.HTMLTag.UNDERLINE.getEnd());
-        }
-
-        prefix.append(getOpenFontTag(set));
-        stack.push(HTMLHelper.HTMLTag.FONT.getEnd());
-
-        prefix.append(text);
-        while (!stack.isEmpty()) {
-            prefix.append(stack.pop());
-        }
-        return prefix.toString();
-    }
-
-    private String getOpenFontTag(AttributeSet set) {
-        String font = StyleConstants.getFontFamily(set);
-        double size = StyleConstants.getFontSize(set) * 3f / 11;
-        Color c = StyleConstants.getForeground(set);
-        HTMLHelper.HTMLColor color = HTMLHelper.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
-        String result = "<font";
-        if (font != null) {
-            result += " face=\"" + font + "\"";
-        }
-        if (color != null) {
-            result += " color=\"" + Integer.toHexString(color.getNumber()) + "\"";
-        }
-        Color back = (Color) set.getAttribute(StyleConstants.Background);
-
-        if (back != null) {
-            HTMLHelper.HTMLColor backColor = HTMLHelper.HTMLColor.getColor(back.getRGB() ^ 0xff000000);
-            result += " style=\"BACKGROUND-COLOR:" + Integer.toHexString(backColor.getNumber()) + "\"";
-        }
-        result += " size=" + size;
-        result += ">";
-        System.out.println("RESULT " + result);
-        return result;
-    }
-
+  
     /**
      * @param args the command line arguments
      */

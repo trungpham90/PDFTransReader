@@ -7,7 +7,9 @@ package com.pdfreader.util;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Stack;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -155,6 +157,67 @@ public class HTMLHelper {
                 doc.insertString(doc.getLength(), "" + text.charAt(i), null);
             }
         }
+    }
+
+    public static String getTextStyleToHTML(StyledDocument doc) throws BadLocationException {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < doc.getLength(); i++) {
+            Element element = doc.getCharacterElement(i);
+            StringBuilder tmp = new StringBuilder();
+            AttributeSet set = element.getAttributes();
+            builder.append(getTextStyleToHTML(doc.getText(i, 1), set));
+        }
+        return builder.toString();
+    }
+
+    private static String getTextStyleToHTML(String text, AttributeSet set) {
+        StringBuilder prefix = new StringBuilder();
+        Stack<String> stack = new Stack();
+        if (StyleConstants.isBold(set)) {
+            prefix.append(HTMLHelper.HTMLTag.BOLD.getStart());
+            stack.push(HTMLHelper.HTMLTag.BOLD.getEnd());
+        }
+        if (StyleConstants.isItalic(set)) {
+            prefix.append(HTMLHelper.HTMLTag.ITALIC.getStart());
+            stack.push(HTMLHelper.HTMLTag.ITALIC.getEnd());
+        }
+        if (StyleConstants.isUnderline(set)) {
+            prefix.append(HTMLHelper.HTMLTag.UNDERLINE.getStart());
+            stack.push(HTMLHelper.HTMLTag.UNDERLINE.getEnd());
+        }
+
+        prefix.append(getOpenFontTag(set));
+        stack.push(HTMLHelper.HTMLTag.FONT.getEnd());
+
+        prefix.append(text);
+        while (!stack.isEmpty()) {
+            prefix.append(stack.pop());
+        }
+        return prefix.toString();
+    }
+
+    private static String getOpenFontTag(AttributeSet set) {
+        String font = StyleConstants.getFontFamily(set);
+        double size = StyleConstants.getFontSize(set) * 3f / 11;
+        Color c = StyleConstants.getForeground(set);
+        HTMLHelper.HTMLColor color = HTMLHelper.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
+        String result = "<font";
+        if (font != null) {
+            result += " face=\"" + font + "\"";
+        }
+        if (color != null) {
+            result += " color=\"" + Integer.toHexString(color.getNumber()) + "\"";
+        }
+        Color back = (Color) set.getAttribute(StyleConstants.Background);
+
+        if (back != null) {
+            HTMLHelper.HTMLColor backColor = HTMLHelper.HTMLColor.getColor(back.getRGB() ^ 0xff000000);
+            result += " style=\"BACKGROUND-COLOR:" + Integer.toHexString(backColor.getNumber()) + "\"";
+        }
+        result += " size=" + size;
+        result += ">";
+        System.out.println("RESULT " + result);
+        return result;
     }
 
     private static void setFont(String tag, MutableAttributeSet att) {
