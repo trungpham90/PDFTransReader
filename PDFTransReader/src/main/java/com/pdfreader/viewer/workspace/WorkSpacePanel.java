@@ -30,6 +30,7 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     
     private void init() {
         pDFMapPanel.getSummaryPanel().setPageNum(pageNum);
+        pDFMapPanel.getUnprocessedMapPanel().setPage(pageNum);
         pDFMapPanel.getSummaryPanel().addListener(this);
         pDFMapPanel.getUnprocessedMapPanel().addListener(this);
     }

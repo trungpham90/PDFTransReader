@@ -70,7 +70,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         init();
     }
     
-    private void init() {
+    private void init() {        
         editText(false);
         colorMenu = new JPopupMenu();
         ColorSectionPanel selection = new ColorSectionPanel(colorMenu);
@@ -236,6 +236,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             }
         });
 
+        currentTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         currentTextField.setText("  ");
         currentTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -406,6 +407,17 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
     }// </editor-fold>//GEN-END:initComponents
 
     private void currentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentTextFieldActionPerformed
+        try {
+            int v = Integer.parseInt(currentTextField.getText());
+            if (v - 1 < unprocessText.size() && v - 1 >= 0) {
+                loadUnprocessText(v - 1);
+            }else{
+                currentTextField.setText("" + (1 + currentItem));
+            }
+        } catch (NumberFormatException ex) {
+            currentTextField.setText("" + (1 + currentItem));
+        }
+        
     }//GEN-LAST:event_currentTextFieldActionPerformed
     
     private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
