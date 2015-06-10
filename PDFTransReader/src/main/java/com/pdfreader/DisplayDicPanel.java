@@ -344,6 +344,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                     @Override
                     public void unprocessedTextAdd(PDFUnprocessText text) {
                         PDFReaderWorkSpace.PDFSentenceNode node = workspace.createSentenceNode(text.getContent(), text.getPage());
+                        System.out.println(" ADD TO GRAPH " + node.toString());
                         listPanel.addVertex(node);
                         try {
                             listPanel.removeUnprocessText(text);

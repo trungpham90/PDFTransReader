@@ -551,7 +551,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             editText(true);
         } else {
             try {
-                unprocessText.get(currentItem).setContent(HTMLHelper.getTextStyleToHTML(contentTextPane.getStyledDocument()));
+                unprocessText.get(currentItem).setContent(HTMLHelper.getTextStyleToHTML(contentTextPane.getStyledDocument()));               
             } catch (BadLocationException ex) {
                 Logger.getLogger(UnprocessedMapPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

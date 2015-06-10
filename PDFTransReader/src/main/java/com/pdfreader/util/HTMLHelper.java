@@ -5,6 +5,7 @@
 package com.pdfreader.util;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Stack;
 import javax.swing.text.AttributeSet;
@@ -20,6 +21,9 @@ import javax.swing.text.StyledDocument;
  * @author Trung Pham
  */
 public class HTMLHelper {
+
+    private static final int DEFAULT_HTML_FONT_SIZE = 3;
+    private static final int DEFAULT_FONT_SIZE = 12;
 
     public static enum HTMLTag {
 
@@ -106,7 +110,7 @@ public class HTMLHelper {
             return null;
         }
     }
-    public static final int[] HTML_FONT_SIZE = {8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72, 96};
+    public static final int[] HTML_FONT_SIZE = {8, 9, 10, 11, 12, 14, 18, 24, 28};
 
     public static void convertHtmlToTextStyle(String text, StyledDocument doc) throws BadLocationException {
 
@@ -120,8 +124,7 @@ public class HTMLHelper {
                 }
                 String cur = "";
                 while (text.charAt(i) != '>') {
-                    cur += text.charAt(i);
-                    i++;
+                    cur += text.charAt(i++);                    
                 }
                 cur += text.charAt(i);
                 if (!neg) {
@@ -149,7 +152,7 @@ public class HTMLHelper {
                                 setFont(tag, att);
                                 break;
                         }
-                        doc.setCharacterAttributes(start, doc.getLength() - start, att, true);
+                        doc.setCharacterAttributes(start, doc.getLength() - start, att, false);
 
                     }
                 }
@@ -198,10 +201,11 @@ public class HTMLHelper {
 
     private static String getOpenFontTag(AttributeSet set) {
         String font = StyleConstants.getFontFamily(set);
-        double size = StyleConstants.getFontSize(set) * 3f / 11;
+        int size = StyleConstants.getFontSize(set) * DEFAULT_HTML_FONT_SIZE / DEFAULT_FONT_SIZE;
         Color c = StyleConstants.getForeground(set);
         HTMLHelper.HTMLColor color = HTMLHelper.HTMLColor.getColor(c.getRGB() ^ 0xff000000);
         String result = "<font";
+
         if (font != null) {
             result += " face=\"" + font + "\"";
         }
@@ -215,8 +219,8 @@ public class HTMLHelper {
             result += " style=\"BACKGROUND-COLOR:" + Integer.toHexString(backColor.getNumber()) + "\"";
         }
         result += " size=" + size;
+
         result += ">";
-        System.out.println("RESULT " + result);
         return result;
     }
 
@@ -224,30 +228,35 @@ public class HTMLHelper {
 
         String[] tmp = tag.substring(1, tag.length() - 1).split(" ");
         System.out.println(Arrays.toString(tmp));
-        for (String value : tmp) {
+        for (int i = 0; i < tmp.length; i++) {
+            String value = tmp[i];
             if (value.startsWith("face")) {
                 String font = value.split("=")[1];
-                font = font.substring(1, font.length() - 1);
-                System.out.println(font);
+                if (!font.endsWith("\"")) {
+                    while (!font.endsWith("\"")) {
+                        font += " " + tmp[++i];
+                    }
+                    i--;
+                }
+                font = font.substring(1, font.length() - 1);                
                 StyleConstants.setFontFamily(att, font);
             } else if (value.startsWith("color")) {
                 String color = value.split("=")[1];
                 color = color.substring(1, color.length() - 1);
                 int colorValue = Integer.parseInt(color, 16);
-                HTMLColor c = HTMLColor.getColor(colorValue);
+                HTMLColor c = HTMLColor.getColor(colorValue);                
                 StyleConstants.setForeground(att, new Color(c.getNumber()));
             } else if (value.startsWith("size")) {
                 String size = value.split("=")[1];
 
-                double s = Double.parseDouble(size);
-                //System.out.println(s*11/3);
-                StyleConstants.setFontSize(att, (int) (s * 11 / 3));
+                double s = Double.parseDouble(size);                
+                StyleConstants.setFontSize(att, (int) (s * DEFAULT_FONT_SIZE / DEFAULT_HTML_FONT_SIZE));
             } else if (value.startsWith("style")) {
                 String s = value.split("=")[1];
                 s = s.substring(1, s.length() - 1);
-                String color = s.split(":")[1];
+                String color = s.split(":")[1];                
                 int colorValue = Integer.parseInt(color, 16);
-                HTMLColor c = HTMLColor.getColor(colorValue);
+                HTMLColor c = HTMLColor.getColor(colorValue);                
                 StyleConstants.setBackground(att, new Color(c.getNumber()));
             }
         }
