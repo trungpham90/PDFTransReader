@@ -96,6 +96,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private int lastX = 0, lastY = 0;
     private static final int COLLAPSE_SIZE_X = 30, COLLAPSE_SIZE_Y = 30;
     private static boolean isSourceHide = false, isTargetHide = false;
+    private int currentPage;
     private Timer timer;
 
     /**
@@ -107,8 +108,26 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         init();
     }
 
+    public void setCurrentPage(int page) {
+        this.currentPage = page;
+        int min = Integer.MAX_VALUE;        
+        for (PDFReaderWorkSpace.PDFSentenceNode node : graph.vertexSet()) {
+            int dif = Math.abs(node.getPage() - page);
+            min = Math.min(min, dif);
+        }
+        for (PDFReaderWorkSpace.PDFSentenceNode node : graph.vertexSet()) {
+            int dif = Math.abs(node.getPage() - page);          
+            if (dif > min) {
+                collapseNode(node);
+            }else{
+                expandNode(node);
+            }
+        }
+    }
+
     public void setPageNum(int page) {
         this.pageNum = page;
+
     }
 
     private void init() {
@@ -487,6 +506,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         Map attr = cell.getAttributes();
         Rectangle2D bound = GraphConstants.getBounds(attr);
         setVertexAttribute(cell, GraphConstants.getBackground(attr), true, (int) bound.getX(), (int) bound.getY(), COLLAPSE_SIZE_X, COLLAPSE_SIZE_Y);
+        graphGraphics.repaint();
         graphGraphics.refresh();
     }
 
@@ -496,6 +516,7 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         Map attr = cell.getAttributes();
         Rectangle2D bound = GraphConstants.getBounds(attr);
         setVertexAttribute(cell, GraphConstants.getBackground(attr), true, (int) bound.getX(), (int) bound.getY(), getEstimatedLength(PDFReaderUtil.getTextWithoutHTMLTag(node.getContent())), getEstimatedHeight(PDFReaderUtil.getTextWithoutHTMLTag(node.getContent())));
+        graphGraphics.repaint();
         graphGraphics.refresh();
     }
 
@@ -514,8 +535,6 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
         addVertex(node, startX, startY);
 
     }
-    
-    
 
     private void positionVertexAt(PDFReaderWorkSpace.PDFSentenceNode vertex, int x, int y) {
         DefaultGraphCell cell = graphAdapter.getVertexCell(vertex);

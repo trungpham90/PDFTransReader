@@ -28,7 +28,7 @@ import javax.swing.text.StyledDocument;
  * @author Trung Pham
  */
 public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSectionPanel.ColorSelectionListener {
-    
+
     @Override
     public void colorSelection(boolean text, HTMLColor color) {
         int start = contentTextPane.getSelectionStart();
@@ -37,23 +37,23 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         StyledDocument doc = contentTextPane.getStyledDocument();
         for (int i = start; i < end; i++) {
             Element e = doc.getCharacterElement(i);
-            
+
             SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
             if (!text) {
                 StyleConstants.setBackground(att, new Color(color.getNumber()));
             } else {
                 StyleConstants.setForeground(att, new Color(color.getNumber()));
             }
-            
+
             doc.setCharacterAttributes(i, 1, att, true);
         }
-        
+
     }
-    
+
     public static interface UnprocessedMapPanelListener {
-        
+
         public void addToWorkSpace(PDFReaderWorkSpace.PDFUnprocessText txt);
-        
+
         public void removeFromWorkSpace(PDFReaderWorkSpace.PDFUnprocessText txt);
     }
     private HashSet<UnprocessedMapPanelListener> lis = new HashSet();
@@ -64,13 +64,13 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
      */
     ArrayList<PDFReaderWorkSpace.PDFUnprocessText> unprocessText = new ArrayList();
     private int currentItem = 0;
-    
+
     public UnprocessedMapPanel() {
         initComponents();
         init();
     }
-    
-    private void init() {        
+
+    private void init() {
         editText(false);
         colorMenu = new JPopupMenu();
         ColorSectionPanel selection = new ColorSectionPanel(colorMenu);
@@ -88,9 +88,9 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             sizeModel.addElement(i);
         }
         sizeComboBox.setModel(sizeModel);
-        
+
     }
-    
+
     public void setPage(int page) {
         this.pageNum = page;
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
@@ -99,21 +99,23 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         }
         pageNumComboBox.setModel(model);
     }
-    
+
     public void addListener(UnprocessedMapPanelListener l) {
         lis.add(l);
     }
-    
+
     public void addUnprocessedText(PDFReaderWorkSpace.PDFUnprocessText text) {
         if (!unprocessText.contains(text)) {
             unprocessText.add(text);
             totalUnprocessLabel.setText("/" + unprocessText.size());
         }
         if (unprocessText.size() == 1) {
+            addButton.setEnabled(true);
+            removeButton.setEnabled(true);
             loadUnprocessText(currentItem);
-        }
+        }        
     }
-    
+
     public void removeUnprocssedText(PDFReaderWorkSpace.PDFUnprocessText text) throws BadLocationException {
         int index = unprocessText.indexOf(text);
         if (index >= 0) {
@@ -130,19 +132,22 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
                     }
                 }
             } else {
+                addButton.setEnabled(false);
+                removeButton.setEnabled(false);
                 clearEditScreen();
             }
         }
     }
-    
+
     private void clearEditScreen() throws BadLocationException {
         contentTextPane.getStyledDocument().remove(0, contentTextPane.getStyledDocument().getLength());
         currentTextField.setText("0");
         totalUnprocessLabel.setText("/0");
+        
     }
-    
+
     public void editText(boolean val) {
-        contentTextPane.setEditable(val);        
+        contentTextPane.setEditable(val);
         boldButton.setEnabled(val);
         italicButton.setEnabled(val);
         underlineButton.setEnabled(val);
@@ -155,19 +160,19 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         removeButton.setEnabled(!val);
         currentTextField.setEnabled(!val);
     }
-    
+
     private void loadUnprocessText(int index) {
         if (index >= unprocessText.size() || index < 0) {
             throw new NullPointerException("Invalid index when loading unprocess text!");
         }
-        
+
         currentItem = index;
         pageNumComboBox.setSelectedItem(("" + unprocessText.get(currentItem).getPage()).intern());
         load(unprocessText.get(currentItem));
         currentTextField.setText("" + (1 + currentItem));
         totalUnprocessLabel.setText("/" + unprocessText.size());
     }
-    
+
     private void load(PDFReaderWorkSpace.PDFUnprocessText textNode) {
         contentTextPane.setText("");
         try {
@@ -411,15 +416,15 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             int v = Integer.parseInt(currentTextField.getText());
             if (v - 1 < unprocessText.size() && v - 1 >= 0) {
                 loadUnprocessText(v - 1);
-            }else{
+            } else {
                 currentTextField.setText("" + (1 + currentItem));
             }
         } catch (NumberFormatException ex) {
             currentTextField.setText("" + (1 + currentItem));
         }
-        
+
     }//GEN-LAST:event_currentTextFieldActionPerformed
-    
+
     private void boldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boldButtonActionPerformed
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
@@ -436,7 +441,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         if (notBold) {
             for (int i = start; i < end; i++) {
                 Element e = doc.getCharacterElement(i);
-                
+
                 SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
                 StyleConstants.setBold(att, true);
                 doc.setCharacterAttributes(i, 1, att, true);
@@ -450,7 +455,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             }
         }
     }//GEN-LAST:event_boldButtonActionPerformed
-    
+
     private void italicButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_italicButtonActionPerformed
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
@@ -466,7 +471,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         if (notItalic) {
             for (int i = start; i < end; i++) {
                 Element e = doc.getCharacterElement(i);
-                
+
                 SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
                 StyleConstants.setItalic(att, true);
                 doc.setCharacterAttributes(i, 1, att, true);
@@ -480,7 +485,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             }
         }
     }//GEN-LAST:event_italicButtonActionPerformed
-    
+
     private void underlineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_underlineButtonActionPerformed
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
@@ -497,7 +502,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
         if (notUnderline) {
             for (int i = start; i < end; i++) {
                 Element e = doc.getCharacterElement(i);
-                
+
                 SimpleAttributeSet att = new SimpleAttributeSet(e.getAttributes());
                 StyleConstants.setUnderline(att, true);
                 doc.setCharacterAttributes(i, 1, att, true);
@@ -511,7 +516,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             }
         }
     }//GEN-LAST:event_underlineButtonActionPerformed
-    
+
     private void fontComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fontComboBoxActionPerformed
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
@@ -524,7 +529,7 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             doc.setCharacterAttributes(i, 1, att, true);
         }
     }//GEN-LAST:event_fontComboBoxActionPerformed
-    
+
     private void sizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeComboBoxActionPerformed
         int start = contentTextPane.getSelectionStart();
         int end = contentTextPane.getSelectionEnd();
@@ -536,66 +541,68 @@ public class UnprocessedMapPanel extends javax.swing.JPanel implements ColorSect
             StyleConstants.setFontSize(att, size);
             doc.setCharacterAttributes(i, 1, att, true);
         }
-        
+
     }//GEN-LAST:event_sizeComboBoxActionPerformed
-    
+
     private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
-        
+
         JButton button = (JButton) evt.getSource();
         colorMenu.show(button, 0, button.getHeight());
-        
+
     }//GEN-LAST:event_colorButtonActionPerformed
-    
+
     private void editToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editToggleButtonActionPerformed
         if (editToggleButton.isSelected()) {
             editText(true);
         } else {
             try {
-                unprocessText.get(currentItem).setContent(HTMLHelper.getTextStyleToHTML(contentTextPane.getStyledDocument()));               
+                unprocessText.get(currentItem).setContent(HTMLHelper.getTextStyleToHTML(contentTextPane.getStyledDocument()));
             } catch (BadLocationException ex) {
                 Logger.getLogger(UnprocessedMapPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             editText(false);
         }
-        
+
     }//GEN-LAST:event_editToggleButtonActionPerformed
-    
+
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if (currentItem + 1 < unprocessText.size()) {
             currentItem++;
             loadUnprocessText(currentItem);
         }
     }//GEN-LAST:event_nextButtonActionPerformed
-    
+
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        
+
         if (currentItem - 1 >= 0) {
             currentItem--;
             loadUnprocessText(currentItem);
         }
-        
-        
+
+
     }//GEN-LAST:event_backButtonActionPerformed
-    
+
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        
+
         for (UnprocessedMapPanelListener l : lis) {
             l.addToWorkSpace(unprocessText.get(currentItem));
         }
-        
+
     }//GEN-LAST:event_addButtonActionPerformed
-    
+
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        
+
         for (UnprocessedMapPanelListener l : lis) {
             l.removeFromWorkSpace(unprocessText.get(currentItem));
         }
-        
+
     }//GEN-LAST:event_removeButtonActionPerformed
-    
+
     private void pageNumComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageNumComboBoxActionPerformed
-        int val = Integer.parseInt(pageNumComboBox.getSelectedItem().toString());
-        unprocessText.get(currentItem).setPage(val);
+        if (!unprocessText.isEmpty()) {
+            int val = Integer.parseInt(pageNumComboBox.getSelectedItem().toString());
+            unprocessText.get(currentItem).setPage(val);
+        }
     }//GEN-LAST:event_pageNumComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;

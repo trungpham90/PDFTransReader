@@ -106,6 +106,7 @@ public class PDFReaderWorkSpace {
             this.content = content;
             this.id = id;
             this.color = null;
+            this.page = page;
         }
 
         public String getContent() {

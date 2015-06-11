@@ -22,6 +22,7 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
     private DefaultListModel<String> model;
     private final int pageNum;
     
+    
     public WorkSpacePanel(int pageNum) {
         this.pageNum = pageNum;
         initComponents();
@@ -33,6 +34,10 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
         pDFMapPanel.getUnprocessedMapPanel().setPage(pageNum);
         pDFMapPanel.getSummaryPanel().addListener(this);
         pDFMapPanel.getUnprocessedMapPanel().addListener(this);
+    }
+    
+    public void setCurrentPage(int page){
+        pDFMapPanel.getSummaryPanel().setCurrentPage(page);
     }
     
     public void addUnprocessText(PDFReaderWorkSpace.PDFUnprocessText node) {

@@ -68,35 +68,35 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
     public void notifyClickListeners(MouseEvent e) {
 
         for (ViewerSelectionListener lis : listeners) {
-
             lis.clickTrigger(e);
-
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
-        
-        notifyClickListeners( e);
+
+        notifyClickListeners(e);
 
     }
 
     public void setHighLight(List<PDFWord> list) {
-        System.out.println("Set " + x1 + " " + y1 + " " + x2 + " " + y2);
         panel.setHightlightArea(list);
         panel.repaint();
     }
-    
-    public void clearHighLight(){
+
+    public void clearHighLight() {
         panel.clearHighLight();
         panel.repaint();
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         count = 0;
         x1 = e.getX();
         y1 = e.getY();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         x2 = e.getX();
         y2 = e.getY();
@@ -106,12 +106,15 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
 
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         x2 = e.getX();
         y2 = e.getY();
@@ -121,6 +124,7 @@ public class PDFViewerPanel extends JPanel implements MouseListener, MouseMotion
         }
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 

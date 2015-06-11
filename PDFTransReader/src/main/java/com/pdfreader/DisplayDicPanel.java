@@ -123,6 +123,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
         try {
             page = num;
             viewPanel.setPage(reader.getPage(page));
+            listPanel.setCurrentPage(page + 1);
             pageTextField.setText("" + (page + 1));
             wordMap = new HashMap();
             for (String word : workspace.getWordList()) {
