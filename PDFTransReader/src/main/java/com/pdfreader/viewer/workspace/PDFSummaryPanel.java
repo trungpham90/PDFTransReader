@@ -58,6 +58,8 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     private static final Color WHITE = new Color(0xFFFFFF);
     private static final Color YELLOW = new Color(0xFFFF99);
 
+   
+
     static enum BackgroundColor {
 
         Blue("Blue", BLUE),
@@ -240,6 +242,18 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
                         final Object o = cell.getUserObject();
                         if (o instanceof PDFReaderWorkSpace.PDFSentenceNode) {
                             final PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
+                            JMenuItem goToPage = new JMenuItem("Go to page specified by this node");
+                            goToPage.addActionListener(new ActionListener() {
+
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    PDFReaderWorkSpace.PDFSentenceNode node = (PDFReaderWorkSpace.PDFSentenceNode) o;
+                                    notifyGoToPage(node.getPage() - 1);
+                                }
+                            });
+                            menu.add(goToPage);
+                            
+                            
                             JMenuItem remove = new JMenuItem("Remove this node");
                             remove.addActionListener(new ActionListener() {
                                 @Override
@@ -639,6 +653,13 @@ public class PDFSummaryPanel extends javax.swing.JPanel implements ISummaryPanel
     public void notifyEdgeRemove(String id) {
         for (ISummaryPanelListener lis : listeners) {
             lis.edgeRemove(id);
+        }
+    }
+    
+     @Override
+    public void notifyGoToPage(int page) {
+        for (ISummaryPanelListener lis : listeners) {
+            lis.goToPage(page);
         }
     }
 }

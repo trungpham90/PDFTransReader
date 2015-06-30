@@ -18,4 +18,6 @@ public interface ISummaryPanelListener {
     public void vertexRemove(String id);
     
     public void edgeRemove(String id);
+    
+    public void goToPage(int page);
 }

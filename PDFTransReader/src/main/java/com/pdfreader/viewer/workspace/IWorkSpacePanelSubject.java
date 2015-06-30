@@ -29,4 +29,6 @@ public interface IWorkSpacePanelSubject {
     public void notifyVertexRemove(String id);
     
     public void notifyEdgeReomve(String id);
+    
+    public void notifyGoToPage(int page);
 }

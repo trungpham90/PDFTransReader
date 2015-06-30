@@ -236,4 +236,16 @@ public class WorkSpacePanel extends javax.swing.JPanel implements IWorkSpacePane
             lis.unprocessedTextRemove(text);
         }
     }
+
+    @Override
+    public void goToPage(int page) {
+        notifyGoToPage(page);
+    }
+
+    @Override
+    public void notifyGoToPage(int page) {
+       for(IWorkSpacePanelListener lis : listeners){
+            lis.goToPage(page);
+        }
+    }
 }

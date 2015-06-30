@@ -25,4 +25,6 @@ public interface IWorkSpacePanelListener {
     public void unprocessedTextAdd(PDFReaderWorkSpace.PDFUnprocessText text);
 
     public void unprocessedTextRemove(PDFReaderWorkSpace.PDFUnprocessText text);
+    
+    public void goToPage(int page);
 }

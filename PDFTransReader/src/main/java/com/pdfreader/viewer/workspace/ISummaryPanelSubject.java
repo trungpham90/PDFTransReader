@@ -20,4 +20,6 @@ public interface ISummaryPanelSubject {
     public void notifyVertexRemove(String id);
     
     public void notifyEdgeRemove(String id);
+    
+    public void notifyGoToPage(int page);
 }

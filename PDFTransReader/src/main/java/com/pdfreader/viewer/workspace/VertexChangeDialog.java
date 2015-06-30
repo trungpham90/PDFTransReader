@@ -28,7 +28,6 @@ import javax.swing.text.StyledDocument;
  */
 public class VertexChangeDialog extends javax.swing.JDialog implements ColorSectionPanel.ColorSelectionListener {
 
-   
     private JPopupMenu colorMenu;
 
     @Override
@@ -51,8 +50,6 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         }
 
     }
-
-    
     private PDFReaderWorkSpace.PDFSentenceNode node;
     private int pageNum;
 
@@ -98,8 +95,8 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
         for (int i = 0; i < pageNum; i++) {
             model.addElement(("" + (i + 1)).intern());
         }
-        pageNumComboBox.setModel(model);
-        pageNumComboBox.setSelectedItem(("" + node.getPage()).intern());
+        pageNumComboBox.setModel(model);        
+        pageNumComboBox.setSelectedItem(("" + (node.getPage())).intern());
     }
 
     /**
@@ -295,7 +292,7 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         try {
             int num = Integer.parseInt(pageNumComboBox.getSelectedItem().toString());
-            node.setPage(num - 1);
+            node.setPage(num);
         } catch (NumberFormatException ex) {
             return;
         }
@@ -436,22 +433,11 @@ public class VertexChangeDialog extends javax.swing.JDialog implements ColorSect
     }//GEN-LAST:event_colorButtonActionPerformed
 
     private void pageNumComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageNumComboBoxActionPerformed
-
-        
-        
-        
-        
     }//GEN-LAST:event_pageNumComboBoxActionPerformed
     private String wrapHtmlTag(String text) {
         return "<html>" + text + "</html>";
     }
 
-    
-  
-
-   
-
-  
     /**
      * @param args the command line arguments
      */

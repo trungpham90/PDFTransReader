@@ -363,6 +363,11 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                             Logger.getLogger(DisplayDicPanel.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+
+                    @Override
+                    public void goToPage(int page) {
+                        setPage(page);
+                    }
                 });
 
                 rightPanel.add(listPanel, BorderLayout.CENTER);
@@ -410,7 +415,7 @@ public class DisplayDicPanel extends javax.swing.JPanel {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         String content = PDFReaderUtil.getTextFromPDFList(selectedList);
-                                        PDFReaderWorkSpace.PDFUnprocessText node = workspace.createUnprocessText(content, page);
+                                        PDFReaderWorkSpace.PDFUnprocessText node = workspace.createUnprocessText(content, page + 1);
                                         listPanel.addUnprocessText(node);
                                     }
                                 });
