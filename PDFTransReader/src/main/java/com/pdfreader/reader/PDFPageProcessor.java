@@ -171,7 +171,7 @@ class PDFPageProcessor {
                 if (lastY == pos.getY()) {
                     space = (pos.getX() - lastX - lastSize) >= getAverageCharTolerance();
                 }
-                if (Character.isSpaceChar(str.charAt(0)) || (!Character.isLetter(str.charAt(0)) && !Character.isDigit(str.charAt(0)))) {
+                if (Character.isSpaceChar(str.charAt(0))) {
                     if (word.length() > 0) {
                         if (!map.containsKey(lastY)) {
                             map.put(lastY, new ArrayList());
